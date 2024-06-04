@@ -60,7 +60,10 @@ div.separator svg {
 .hider-ribbon .side-dock-ribbon div.separator svg {
   -webkit-mask-image: var(--left-indicator);
 }
-.hider-ribbon .side-dock-ribbon div.separator.is-collapsed.bt-sortable-chosen svg {
+.hider-ribbon
+  .side-dock-ribbon
+  div.separator.is-collapsed.bt-sortable-chosen
+  svg {
   /* so that the icon updates to show the expand icon on drag start */
   -webkit-mask-image: var(--left-indicator);
 }
@@ -119,24 +122,31 @@ body.is-dragging .tooltip {
 .workspace-tab-header-container.is-dragging .workspace-tab-container-after {
   background: none;
 }
-.workspace-tab-header-container.is-dragging .workspace-tab-header-inner-icon:hover {
+.workspace-tab-header-container.is-dragging
+  .workspace-tab-header-inner-icon:hover {
   background: none;
 }
 
-.workspace-leaf-content[data-type="file-explorer"] .nav-header .search-input-container {
+.workspace-leaf-content[data-type="file-explorer"]
+  .nav-header
+  .search-input-container {
   display: none;
 }
 
-.workspace-leaf-content[data-type="file-explorer"] .nav-header .search-input-container.is-active {
+.workspace-leaf-content[data-type="file-explorer"]
+  .nav-header
+  .search-input-container.is-active {
   display: block;
 }
 
-div.nav-action-button[data-sort-method] + div.nav-action-button.drag-to-rearrange {
+div.nav-action-button[data-sort-method]
+  + div.nav-action-button.drag-to-rearrange {
   display: none;
 }
 
-div.nav-action-button[data-sort-method="custom"] + div.nav-action-button.drag-to-rearrange {
-  display: block;
+div.nav-action-button[data-sort-method="custom"]
+  + div.nav-action-button.drag-to-rearrange {
+  display: flex;
 }
 
 .nav-files-container .sortable-fallback {
