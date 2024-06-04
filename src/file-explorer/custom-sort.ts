@@ -1,5 +1,5 @@
 import Fuse from "fuse.js";
-import {Menu, TAbstractFile, TFile, TFolder, requireApiVersion, FileExplorerView} from "obsidian";
+import {Menu, TAbstractFile, TFile, TFolder, requireApiVersion, FileExplorerView, sanitizeHTMLToDom} from "obsidian";
 import {BartenderSettings} from "../settings/settings";
 
 let Collator = new Intl.Collator(undefined, {
@@ -31,7 +31,11 @@ let Sorter = {
 
 const Translate = i18next.t.bind(i18next);
 
-const SortGlyph = "up-and-down-arrows";
+const SortGlyph = "arrow-up-narrow-wide";
+
+const MOVE_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move svg-icon"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="22"/></svg>'
+
+const DEFAULT_ICON = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-narrow-wide svg-icon"><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/><path d="M11 12h4"/><path d="M11 16h7"/><path d="M11 20h10"/></svg>';
 
 const sortOptionStrings = {
   alphabetical: "plugins.file-explorer.label-sort-a-to-z",
@@ -86,8 +90,9 @@ export const folderSort = function (order: string[], foldersOnBottom?: boolean) 
 
 export const addSortButton = function (settings:BartenderSettings, sorter: any, sortOption: any,setSortOrder:any,currentSort:any) {
   let plugin = this;
+  console.log(settings.sortOrder);
   let sortEl = this.addNavButton(
-    SortGlyph,
+    settings.sortOrder === "custom" ? "move" : "arrow-up-narrow-wide",
     Translate("plugins.file-explorer.action-change-sort"),
     function (event: MouseEvent) {
       event.preventDefault();
@@ -110,6 +115,23 @@ export const addSortButton = function (settings:BartenderSettings, sorter: any, 
                       plugin.app.workspace.trigger("file-explorer-sort-change", _sortOption);
                     }
                     setSortOrder(_sortOption);
+                    if (_sortOption === "custom") {
+                      const svg = sortEl.querySelector("svg");
+                      if (svg) {
+                        svg.remove();
+                        sortEl.appendChild(
+                          sanitizeHTMLToDom(MOVE_ICON)
+                        );
+                      }
+                    } else {
+                      const svg = sortEl.querySelector("svg");
+                      if (svg) {
+                        svg.remove();
+                        sortEl.appendChild(
+                          sanitizeHTMLToDom(DEFAULT_ICON))
+                      }
+                    }
+                    
                   });
               });
             },
