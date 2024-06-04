@@ -90,7 +90,6 @@ export const folderSort = function (order: string[], foldersOnBottom?: boolean) 
 
 export const addSortButton = function (settings:BartenderSettings, sorter: any, sortOption: any,setSortOrder:any,currentSort:any) {
   let plugin = this;
-  console.log(settings.sortOrder);
   let sortEl = this.addNavButton(
     settings.sortOrder === "custom" ? "move" : "arrow-up-narrow-wide",
     Translate("plugins.file-explorer.action-change-sort"),
