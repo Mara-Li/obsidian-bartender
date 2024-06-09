@@ -1,3 +1,8 @@
+## [0.5.12](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.11...0.5.12) (2024-06-09)
+### Features
+
+* support for deleting and renaming folder ([8445697](https://github.com/Mara-Li/obsidian-bartender/commit/84456974311945d916fc44206e19010e96529906))
+
 ## [0.5.11](https://github.com/Mara-Li/obsidian-bartender/compare/v0.5.9...v0.5.11) (2024-06-09)
 ### Features
 
