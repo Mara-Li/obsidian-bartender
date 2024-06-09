@@ -7,7 +7,7 @@
     "dev": "node esbuild.config.mjs",
     "build": "node esbuild.config.mjs --production",
     "dev:prod": "node esbuild.config.mjs --vault",
-    "lint": "pnpm biome lint --apply src/",
+    "lint": "pnpm biome lint --write src/",
     "prebuild": "tsc",
     "bump": "node commit-and-tag-version.mjs"
   },

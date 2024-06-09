@@ -1,5 +1,5 @@
 import Fuse from "fuse.js";
-import { ChildElement, requireApiVersion } from "obsidian";
+import { type ChildElement, requireApiVersion } from "obsidian";
 
 export function getPreviousSiblings(el: HTMLElement, filter?: (el: HTMLElement) => boolean): HTMLElement[] {
   const sibs = [];

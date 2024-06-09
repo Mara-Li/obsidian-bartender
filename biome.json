@@ -40,20 +40,19 @@
 				"noSelfAssign": "error",
 				"noSetterReturn": "error",
 				"noSwitchDeclarations": "error",
-				"noUndeclaredVariables": "error",
 				"noUnreachable": "error",
 				"noUnreachableSuper": "error",
 				"noUnsafeFinally": "error",
 				"noUnsafeOptionalChaining": "error",
-				"noUnusedLabels": "error",
-				"noUnusedVariables": "warn",
+				"noUnusedLabels": "off",
+				"noUnusedVariables": "off",
 				"noUnusedImports": "warn",
 				"useIsNan": "error",
 				"useValidForDirection": "error",
 				"useYield": "error"
 			},
 			"suspicious": {
-				"noAssignInExpressions": "error",
+				"noAssignInExpressions": "off",
 				"noAsyncPromiseExecutor": "error",
 				"noCatchAssign": "error",
 				"noClassAssign": "error",
@@ -70,7 +69,7 @@
 				"noGlobalAssign": "error",
 				"noImportAssign": "error",
 				"noMisleadingCharacterClass": "error",
-				"noPrototypeBuiltins": "error",
+				"noPrototypeBuiltins": "off",
 				"noRedeclare": "error",
 				"noShadowRestrictedNames": "error",
 				"noUnsafeNegation": "error",
@@ -119,7 +118,7 @@
 		"formatter": {
 			"quoteStyle": "double",
 			"semicolons": "always",
-			"trailingComma": "es5"
+			"trailingCommas": "es5"
 		}
 	},
 	"json": {

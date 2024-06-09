@@ -1,33 +1,37 @@
 import Fuse from "fuse.js";
 import { around } from "monkey-around";
 import {
-  ChildElement,
-  FileExplorerHeader,
-  FileExplorerView,
+  type ChildElement,
+  type FileExplorerHeader,
+  type FileExplorerView,
   Platform,
   Plugin,
-  RootElements,
+  type RootElements,
   Scope,
   setIcon,
-  SplitDirection,
+  type SplitDirection,
   TFolder,
   Vault,
   View,
-  ViewCreator,
+  type ViewCreator,
   Workspace,
-  WorkspaceItem,
+  type WorkspaceItem,
   WorkspaceLeaf,
-  WorkspaceSplit,
+  type WorkspaceSplit,
   WorkspaceTabs,
   requireApiVersion,
 } from "obsidian";
 
 import Sortable, { MultiDrag } from "sortablejs";
 import { addSortButton, folderSort } from "./custom-sort";
-import { BartenderSettings, DEFAULT_SETTINGS, SettingTab } from "./settings";
+import {
+  type BartenderSettings,
+  DEFAULT_SETTINGS,
+  SettingTab,
+} from "./settings";
 import {
   generateId,
-  GenerateIdOptions,
+  type GenerateIdOptions,
   getFn,
   getItems,
   getNextSiblings,
@@ -347,7 +351,9 @@ export default class BartenderPlugin extends Plugin {
                 this.iconSorter.destroy();
                 this.iconSorter = null;
               }
-            } catch {}
+            } catch {
+              //pass
+            }
             return old.call(this, ...args);
           };
         },
@@ -366,7 +372,9 @@ export default class BartenderPlugin extends Plugin {
                       this
                     );
                   }
-                } catch {}
+                } catch {
+                  //pass
+                }
               }
             }, 200);
 
@@ -476,8 +484,7 @@ export default class BartenderPlugin extends Plugin {
             } catch (err) {
               console.log(err);
             }
-            const result = old.call(this, ...args);
-            return result;
+            return old.call(this, ...args);
           };
         },
       })
@@ -888,7 +895,6 @@ export default class BartenderPlugin extends Plugin {
       ) {
         try {
           sorterParent.iconSorter?.destroy();
-        } catch (err) {
         } finally {
           delete sorterParent.iconSorter;
         }

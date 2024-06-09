@@ -1,5 +1,5 @@
 import "obsidian";
-import Sortable from "sortablejs";
+import type Sortable from "sortablejs";
 
 declare module "obsidian" {
   export interface Workspace extends Events {

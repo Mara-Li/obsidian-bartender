@@ -1,5 +1,5 @@
-import { App, PluginSettingTab, Setting } from "obsidian";
-import BartenderPlugin from "./main";
+import { type App, PluginSettingTab, Setting } from "obsidian";
+import type BartenderPlugin from "./main";
 
 export interface BartenderSettings {
   statusBarOrder: string[];
@@ -9,7 +9,7 @@ export interface BartenderSettings {
   autoHide: boolean;
   autoHideDelay: number;
   dragDelay: number;
-  sortOrder:string;
+  sortOrder: string;
 }
 
 export const DEFAULT_SETTINGS: BartenderSettings = {
@@ -20,7 +20,7 @@ export const DEFAULT_SETTINGS: BartenderSettings = {
   autoHide: false,
   autoHideDelay: 2000,
   dragDelay: 200,
-    sortOrder: "alphabetical"
+  sortOrder: "alphabetical",
 };
 
 export class SettingTab extends PluginSettingTab {
@@ -31,8 +31,6 @@ export class SettingTab extends PluginSettingTab {
     this.plugin = plugin;
   }
 
-  hide() {}
-
   display(): void {
     const { containerEl } = this;
 
@@ -40,9 +38,11 @@ export class SettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Auto Collapse")
-      .setDesc("Automatically hide ribbon and status bar items once your mouse leaves the icon container")
-      .addToggle(toggle =>
-        toggle.setValue(this.plugin.settings.autoHide).onChange(value => {
+      .setDesc(
+        "Automatically hide ribbon and status bar items once your mouse leaves the icon container"
+      )
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.autoHide).onChange((value) => {
           this.plugin.settings.autoHide = value;
           this.plugin.saveSettings();
         })
@@ -50,12 +50,14 @@ export class SettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Auto Collapse Delay")
-      .setDesc("How long to wait before auto collapsing hidden icons on the ribbon and status bar")
-      .addText(textfield => {
+      .setDesc(
+        "How long to wait before auto collapsing hidden icons on the ribbon and status bar"
+      )
+      .addText((textfield) => {
         textfield.setPlaceholder(String(2000));
         textfield.inputEl.type = "number";
         textfield.setValue(String(this.plugin.settings.autoHideDelay));
-        textfield.onChange(async value => {
+        textfield.onChange(async (value) => {
           this.plugin.settings.autoHideDelay = Number(value);
           this.plugin.saveSettings();
         });
@@ -63,12 +65,14 @@ export class SettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Drag Start Delay (ms)")
-      .setDesc("How long to wait before triggering the drag behavior after clicking. ⚠️ Requires an app restart.")
-      .addText(textfield => {
+      .setDesc(
+        "How long to wait before triggering the drag behavior after clicking. ⚠️ Requires an app restart."
+      )
+      .addText((textfield) => {
         textfield.setPlaceholder(String(200));
         textfield.inputEl.type = "number";
         textfield.setValue(String(this.plugin.settings.dragDelay));
-        textfield.onChange(async value => {
+        textfield.onChange(async (value) => {
           this.plugin.settings.dragDelay = Number(value);
           this.plugin.saveSettings();
         });
