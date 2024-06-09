@@ -10,8 +10,6 @@ import {
   Scope,
   setIcon,
   type SplitDirection,
-  TFolder,
-  Vault,
   View,
   type ViewCreator,
   Workspace,
@@ -20,7 +18,6 @@ import {
   type WorkspaceSplit,
   WorkspaceTabs,
   requireApiVersion,
-  TAbstractFile,
 } from "obsidian";
 
 import Sortable, { MultiDrag } from "sortablejs";
