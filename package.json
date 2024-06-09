@@ -6,13 +6,17 @@
   "scripts": {
     "dev": "node esbuild.config.mjs",
     "build": "node esbuild.config.mjs --production",
-    "dev:prod": "node esbuild.config.mjs --vault"
+    "dev:prod": "node esbuild.config.mjs --vault",
+    "lint": "pnpm biome lint --apply src/"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^16.18.98",
+    "@biomejs/biome": "1.8.0",
+    "@types/electron": "npm:@ophidian/electron-types@^24.3.1",
+    "@types/node": "^20.14.2",
+    "@types/obsidian-typings": "npm:obsidian-typings@^1.1.6",
     "@types/sortablejs": "^1.15.8",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
@@ -20,7 +24,7 @@
     "esbuild": "latest",
     "i18next": "^21.10.0",
     "monkey-around": "^2.3.0",
-    "obsidian": "latest",
+    "obsidian": "1.5.7-1",
     "sortablejs": "^1.15.2",
     "tslib": "2.3.1",
     "typescript": "4.4.4"

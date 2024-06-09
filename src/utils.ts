@@ -2,7 +2,7 @@ import Fuse from "fuse.js";
 import { ChildElement, requireApiVersion } from "obsidian";
 
 export function getPreviousSiblings(el: HTMLElement, filter?: (el: HTMLElement) => boolean): HTMLElement[] {
-  var sibs = [];
+  const sibs = [];
   while ((el = el.previousSibling as HTMLElement)) {
     if (el.nodeType === 3) continue; // text node
     if (!filter || filter(el)) sibs.push(el);
@@ -10,7 +10,7 @@ export function getPreviousSiblings(el: HTMLElement, filter?: (el: HTMLElement) 
   return sibs;
 }
 export function getNextSiblings(el: HTMLElement, filter?: (el: HTMLElement) => boolean): HTMLElement[] {
-  var sibs = [];
+  const sibs = [];
   while ((el = el.nextSibling as HTMLElement)) {
     if (el.nodeType === 3) continue; // text node
     if (!filter || filter(el)) sibs.push(el);
@@ -27,13 +27,13 @@ export interface GenerateIdOptions {
 }
 
 export function generateId(el: HTMLElement, options?: GenerateIdOptions) {
-  let classes = options?.useClass
+  const classes = options?.useClass
     ? Array.from(el.classList)
         .filter(c => !c.startsWith("is-"))
         .sort()
         .join(" ")
     : "";
-  let str =
+  const str =
     (options?.useTag ? el.tagName : "") +
     (options?.useClass ? classes : "") +
     (options?.useText ? el.textContent : "") +
@@ -53,8 +53,8 @@ export function base36(str: string) {
 }
 
 export const cyrb53 = function (str: string, seed = 0) {
-  let h1 = 0xdeadbeef ^ seed,
-    h2 = 0x41c6ce57 ^ seed;
+  let h1 = 0xdeadbeef ^ seed;
+  let h2 = 0x41c6ce57 ^ seed;
   for (let i = 0, ch; i < str.length; i++) {
     ch = str.charCodeAt(i);
     h1 = Math.imul(h1 ^ ch, 2654435761);
@@ -74,31 +74,25 @@ export function reorderArray(array: any[], from: number, to: number, on = 1) {
 export const getItems = (items: ChildElement[]): ChildElement[] => {
   let children: any[] = [];
   const supportsVirtualChildren = requireApiVersion && requireApiVersion("0.15.0");
-  let _items;
-  if (supportsVirtualChildren) {
-    _items = items
-      .reduce((res, item) => {
-        if (item.vChildren?._children) {
-          children = [...children, ...item.vChildren._children];
-        } else {
-          res.push(item);
-        }
-        return res;
-      }, [] as ChildElement[])
-      .concat(children.length ? getItems(children) : children);
-  } else {
-    _items = items
-      .reduce((res, item) => {
-        if (item.children) {
-          children = [...children, ...item.children];
-        } else {
-          res.push(item);
-        }
-        return res;
-      }, [] as ChildElement[])
-      .concat(children.length ? getItems(children) : children);
-  }
-  return _items;
+  return supportsVirtualChildren ? items
+  .reduce((res, item) => {
+    if (item.vChildren?._children) {
+      children = [...children, ...item.vChildren._children];
+    } else {
+      res.push(item);
+    }
+    return res;
+  }, [] as ChildElement[])
+  .concat(children.length ? getItems(children) : children) : items
+  .reduce((res, item) => {
+    if (item.children) {
+      children = [...children, ...item.children];
+    } else {
+      res.push(item);
+    }
+    return res;
+  }, [] as ChildElement[])
+  .concat(children.length ? getItems(children) : children);
 };
 
 // highlight fuzzy filter matches
@@ -118,15 +112,14 @@ export const highlight = (fuseSearchResult: any, highlightClassName: string = "s
   };
 
   const generateHighlightedText = (inputText: string, regions: number[][] = []) => {
-    let result = regions
-      .reduce((str, [start, end]) => {
-        str[start] = `<span class="${highlightClassName}">${str[start]}`;
-        str[end] = `${str[end]}</span>`;
-        return str;
-      }, inputText.split(""))
-      .join(""); // .replace(/.md$/, "");
-
-    return result;
+    
+    return regions
+    .reduce((str, [start, end]) => {
+      str[start] = `<span class="${highlightClassName}">${str[start]}`;
+      str[end] = `${str[end]}</span>`;
+      return str;
+    }, inputText.split(""))
+    .join("");
   };
 
   return fuseSearchResult
@@ -152,7 +145,7 @@ export function removeExt(obj: any) {
 }
 
 export function getFn(obj: any, path: string[]) {
-  var value = Fuse.config.getFn(obj, path);
+  const value = Fuse.config.getFn(obj, path);
   if (Array.isArray(value)) {
     return value.map(el => removeExt(el));
   }

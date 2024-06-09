@@ -2,7 +2,6 @@ import Fuse from "fuse.js";
 import { around } from "monkey-around";
 import {
 	ChildElement,
-	Component,
 	FileExplorerHeader,
 	FileExplorerView,
 	Platform,
@@ -24,12 +23,12 @@ import {
 } from "obsidian";
 
 import Sortable, { MultiDrag } from "sortablejs";
-import { addSortButton, folderSort } from "./file-explorer/custom-sort";
+import { addSortButton, folderSort } from "./custom-sort";
 import {
 	BartenderSettings,
 	DEFAULT_SETTINGS,
 	SettingTab,
-} from "./settings/settings";
+} from "./settings";
 import {
 	generateId,
 	GenerateIdOptions,
@@ -45,7 +44,6 @@ Sortable.mount(new MultiDrag());
 
 const STATUS_BAR_SELECTOR = "body > div.app-container div.status-bar";
 const RIBBON_BAR_SELECTOR = "body > div.app-container div.side-dock-actions";
-const DRAG_DELAY = Platform.isMobile ? 200 : 200;
 const ANIMATION_DURATION = 500;
 
 export default class BartenderPlugin extends Plugin {
@@ -73,24 +71,20 @@ export default class BartenderPlugin extends Plugin {
 	}
 
 	patchFileExplorerFolder() {
-		let plugin = this;
-		let leaf = plugin.app.workspace.getLeaf(true);
-		let fileExplorer = plugin.app.viewRegistry.viewByType["file-explorer"](
+		const plugin = this;
+		const leaf = plugin.app.workspace.getLeaf(true);
+		const fileExplorer = plugin.app.viewRegistry.viewByType["file-explorer"](
 			leaf,
 		) as FileExplorerView;
 		// @ts-ignore
-		let tmpFolder = new TFolder(Vault, "");
-		let Folder = fileExplorer.createFolderDom(tmpFolder).constructor;
+		const tmpFolder = new TFolder(Vault, "");
+		const Folder = fileExplorer.createFolderDom(tmpFolder).constructor;
 		this.register(
 			around(Folder.prototype, {
 				sort(old: any) {
 					return function (...args: any[]) {
-						let order = plugin.settings.fileExplorerOrder[this.file.path];
-						if (plugin.settings.sortOrder === "custom") {
-							return folderSort.call(this, order, ...args);
-						} else {
-							return old.call(this, ...args);
-						}
+						const order = plugin.settings.fileExplorerOrder[this.file.path];
+						return plugin.settings.sortOrder === "custom" ? folderSort.call(this, order, ...args) : old.call(this, ...args);
 					};
 				},
 			}),
@@ -109,15 +103,14 @@ export default class BartenderPlugin extends Plugin {
 							STATUS_BAR_SELECTOR,
 							"status-bar-item",
 							true,
-							16,
 						);
 						this.setStatusBarSorter();
 
 						// add sorter to the sidebar tabs
 						if (requireApiVersion && !requireApiVersion("0.15.3")) {
-							let left = (this.app.workspace.leftSplit as WorkspaceSplit)
+							const left = (this.app.workspace.leftSplit as WorkspaceSplit)
 								.children;
-							let right = (this.app.workspace.rightSplit as WorkspaceSplit)
+							const right = (this.app.workspace.rightSplit as WorkspaceSplit)
 								.children;
 							left.concat(right).forEach((child) => {
 								if (child.hasOwnProperty("tabsInnerEl") && !child.iconSorter) {
@@ -138,7 +131,6 @@ export default class BartenderPlugin extends Plugin {
 						RIBBON_BAR_SELECTOR,
 						"side-dock-ribbon-action",
 						false,
-						18,
 					);
 					this.setRibbonBarSorter();
 
@@ -167,18 +159,18 @@ export default class BartenderPlugin extends Plugin {
 
 	clearFileExplorerFilter() {
 		const fileExplorer = this.getFileExplorer();
-		let fileExplorerFilterEl: HTMLInputElement | null =
+		const fileExplorerFilterEl: HTMLInputElement | null =
 			document.body.querySelector(
 				'.workspace-leaf-content[data-type="file-explorer"] .search-input-container > input',
 			);
-		fileExplorerFilterEl && (fileExplorerFilterEl.value = "");
+		if (fileExplorerFilterEl) fileExplorerFilterEl.value = "";
 		fileExplorer.tree.infinityScroll.filter = "";
 		fileExplorer.tree.infinityScroll.compute();
 	}
 
 	fileExplorerFilter = function (fileExplorer: FileExplorerView) {
 		const supportsVirtualChildren =
-			requireApiVersion && requireApiVersion("0.15.0");
+			requireApiVersion?.("0.15.0");
 		/*    let leaf = this?.rootEl?.view?.app.workspace.getLeaf(true);
     let fileExplorer = this?.rootEl?.view?.app.viewRegistry.viewByType["file-explorer"](leaf) as FileExplorerView;*/
 
@@ -198,40 +190,46 @@ export default class BartenderPlugin extends Plugin {
 				includeScore: true,
 				includeMatches: true,
 				useExtendedSearch: true,
-				getFn: getFn,
+				getFn,
 				threshold: 0.1,
 				ignoreLocation: true,
 				keys: ["file.path"],
 			};
-			let flattenedItems = getItems(this.rootEl._children);
+			const flattenedItems = getItems(this.rootEl._children);
 			const fuse = new Fuse(flattenedItems, options);
 			const maxResults = 200;
-			let results = fuse.search(this.filter).slice(0, maxResults);
+			const results = fuse.search(this.filter).slice(0, maxResults);
 			if (supportsVirtualChildren) {
 				this.rootEl.vChildren._children = highlight(results);
 			} else {
 				this.rootEl.children = highlight(results);
 			}
-		} else if (this.filter?.length < 1 && this.filtered) {
-			if (this.rootEl._children) {
-				if (supportsVirtualChildren) {
-					this.rootEl.vChildren._children = this.rootEl._children;
-				} else {
-					this.rootEl.children = this.rootEl._children;
-				}
-			}
-
-			let flattenedItems = getItems(this.rootEl._children);
-			flattenedItems.map((match: ChildElement) => {
-				if ((<any>match).innerEl.origContent) {
-					match.innerEl.setText((<any>match).innerEl.origContent);
-					delete (<any>match).innerEl.origContent;
-					match.innerEl.removeClass("has-matches");
-				}
-			});
-
-			this.filtered = false;
+			return;
 		}
+		if (!(this.filter?.length < 1 && this.filtered)) {
+			return;
+		}
+		if (this.rootEl._children) {
+			if (supportsVirtualChildren) {
+				this.rootEl.vChildren._children = this.rootEl._children;
+			} else {
+				this.rootEl.children = this.rootEl._children;
+			}
+		}
+
+		const flattenedItems = getItems(this.rootEl._children);
+		flattenedItems.map((match: ChildElement) => {
+			if (!(<any>match).innerEl.origContent) {
+				return;
+			}
+			// @ts-ignore
+			match.innerEl.setText((<any>match).innerEl.origContent);
+			delete (<any>match).innerEl.origContent;
+			// @ts-ignore
+			match.innerEl.removeClass("has-matches");
+		});
+
+		this.filtered = false;
 	};
 
 	registerEventHandlers() {
@@ -269,8 +267,8 @@ export default class BartenderPlugin extends Plugin {
 		this.registerEvent(
 			this.app.workspace.on(
 				"bartender-leaf-split",
-				(originLeaf: WorkspaceItem, newLeaf: WorkspaceItem) => {
-					let element: HTMLElement = newLeaf.tabsInnerEl as HTMLElement;
+				(_originLeaf: WorkspaceItem, newLeaf: WorkspaceItem) => {
+					const element: HTMLElement = newLeaf.tabsInnerEl as HTMLElement;
 					if (newLeaf.type === "tabs" && newLeaf instanceof WorkspaceTabs) {
 						if (requireApiVersion && !requireApiVersion("0.15.3")) {
 							this.setTabBarSorter(element, newLeaf);
@@ -331,21 +329,21 @@ export default class BartenderPlugin extends Plugin {
 		// 1) If layout ready, get the existing FE instance, create a patched button, and hide the existing button
 		// 2) Patch `addSortButton` to emit an event
 		// 3) On event,
-		if (!this.app.workspace.layoutReady) {
-			let eventRef = this.app.workspace.on(
+		if (this.app.workspace.layoutReady) {
+			const fileExplorer = this.getFileExplorer();
+			this.patchFileExplorer(fileExplorer);
+		} else {
+			const eventRef = this.app.workspace.on(
 				"view-registered",
 				(type: string, viewCreator: ViewCreator) => {
 					if (type !== "file-explorer") return;
 					this.app.workspace.offref(eventRef);
 					// @ts-ignore we need a leaf before any leafs exists in the workspace, so we create one from scratch
-					let leaf = new WorkspaceLeaf(plugin.app);
-					let fileExplorer = viewCreator(leaf) as FileExplorerView;
+					const leaf = new WorkspaceLeaf(plugin.app);
+					const fileExplorer = viewCreator(leaf) as FileExplorerView;
 					this.patchFileExplorer(fileExplorer);
 				},
 			);
-		} else {
-			let fileExplorer = this.getFileExplorer();
-			this.patchFileExplorer(fileExplorer);
 		}
 		this.register(
 			around(View.prototype, {
@@ -365,13 +363,11 @@ export default class BartenderPlugin extends Plugin {
 						setTimeout(() => {
 							if (this.app.workspace.layoutReady) {
 								try {
-									if (!(this.leaf.parentSplit instanceof WorkspaceTabs)) {
-										if (this.hasOwnProperty("actionsEl") && !this.iconSorter) {
-											this.iconSorter = plugin.setViewActionSorter(
-												this.actionsEl,
-												this,
-											);
-										}
+									if (!(this.leaf.parentSplit instanceof WorkspaceTabs) && (this.hasOwnProperty("actionsEl") && !this.iconSorter)) {
+										this.iconSorter = plugin.setViewActionSorter(
+											this.actionsEl,
+											this,
+										);
 									}
 								} catch {}
 							}
@@ -396,7 +392,7 @@ export default class BartenderPlugin extends Plugin {
 								listener instanceof Function &&
 								this.hasClass("workspace-tab-header")
 							) {
-								let origListener = listener;
+								const origListener = listener;
 								listener = (event) => {
 									if (
 										event instanceof MouseEvent &&
@@ -406,8 +402,7 @@ export default class BartenderPlugin extends Plugin {
 									else origListener(event);
 								};
 							}
-							const result = old.call(this, type, listener, options);
-							return result;
+							return old.call(this, type, listener, options);
 						};
 					},
 				}),
@@ -423,7 +418,7 @@ export default class BartenderPlugin extends Plugin {
 						before?: boolean,
 						...args
 					) {
-						let result = old.call(
+						const result = old.call(
 							this,
 							source,
 							newLeaf,
@@ -437,7 +432,7 @@ export default class BartenderPlugin extends Plugin {
 				},
 				changeLayout(old: any) {
 					return async function (workspace: any, ...args): Promise<void> {
-						let result = await old.call(this, workspace, ...args);
+						const result = await old.call(this, workspace, ...args);
 						this.trigger("bartender-workspace-change");
 						return result;
 					};
@@ -465,111 +460,109 @@ export default class BartenderPlugin extends Plugin {
 	}
 
 	patchFileExplorer(fileExplorer: FileExplorerView) {
-		let plugin = this;
-		let settings = this.settings;
-		if (fileExplorer) {
-			let InfinityScroll = fileExplorer.tree.infinityScroll.constructor;
-			// register clear first so that it gets called first onunload
-			this.register(() => this.clearFileExplorerFilter());
-			this.register(
-				around(InfinityScroll.prototype, {
-					compute(old: any) {
-						return function (...args: any[]) {
-							try {
-								if (this.scrollEl.hasClass("nav-files-container")) {
-									plugin.fileExplorerFilter.call(this, fileExplorer);
-								}
-							} catch (err) {
-								console.log(err);
-							}
-							const result = old.call(this, ...args);
-							return result;
-						};
-					},
-				}),
-			);
-			this.register(
-				around(fileExplorer.headerDom.constructor.prototype, {
-					addSortButton(old: any) {
-						return function (...args: any[]) {
-							if (
-								this.navHeaderEl?.parentElement?.dataset?.type ===
-								"file-explorer"
-							) {
-								plugin.setFileExplorerFilter(this);
-								return addSortButton.call(this, settings, ...args);
-							} else {
-								return old.call(this, ...args);
-							}
-						};
-					},
-				}),
-			);
+		const plugin = this;
+		const settings = this.settings;
+		if (!fileExplorer) {
+			return;
 		}
+		const InfinityScroll = fileExplorer.tree.infinityScroll.constructor;
+		// register clear first so that it gets called first onunload
+		this.register(() => this.clearFileExplorerFilter());
+		this.register(
+			around(InfinityScroll.prototype, {
+				compute(old: any) {
+					return function (...args: any[]) {
+						try {
+							if (this.scrollEl.hasClass("nav-files-container")) {
+								plugin.fileExplorerFilter.call(this, fileExplorer);
+							}
+						} catch (err) {
+							console.log(err);
+						}
+						const result = old.call(this, ...args);
+						return result;
+					};
+				},
+			}),
+		);
+		this.register(
+			around(fileExplorer.headerDom.constructor.prototype, {
+				addSortButton(old: any) {
+					return function (...args: any[]) {
+						if (
+							this.navHeaderEl?.parentElement?.dataset?.type ===
+							"file-explorer"
+						) {
+							plugin.setFileExplorerFilter(this);
+							return addSortButton.call(this, settings, ...args);
+						} else {
+							return old.call(this, ...args);
+						}
+					};
+				},
+			}),
+		);
 	}
 
 	insertSeparator(
 		selector: string,
 		className: string,
 		rtl: Boolean,
-		glyphSize: number = 16,
 	) {
-		let elements = document.body.querySelectorAll(selector);
+		const elements = document.body.querySelectorAll(selector);
 		elements.forEach((el: HTMLElement) => {
-			let getSiblings = rtl ? getPreviousSiblings : getNextSiblings;
-			if (el) {
-				let separator = el.createDiv(`${className} separator`);
-				rtl && el.prepend(separator);
-				let glyphEl = separator.createDiv("glyph");
-				let glyphName = "plus-with-circle"; // this gets replaced using CSS
-				// TODO: Handle mobile icon size differences?
-				setIcon(glyphEl, glyphName, glyphSize);
-				separator.addClass("is-collapsed");
-				this.register(() => separator.detach());
-				let hideTimeout: NodeJS.Timeout;
-				separator.onClickEvent((event: MouseEvent) => {
-					if (separator.hasClass("is-collapsed")) {
-						Array.from(el.children).forEach((el) =>
-							el.removeClass("is-hidden"),
-						);
-						separator.removeClass("is-collapsed");
-					} else {
-						getSiblings(separator).forEach((el) => el.addClass("is-hidden"));
-						separator.addClass("is-collapsed");
-					}
-				});
-				el.onmouseenter = (ev) => {
-					hideTimeout && clearTimeout(hideTimeout);
-				};
-				el.onmouseleave = (ev) => {
-					if (this.settings.autoHide) {
-						hideTimeout = setTimeout(() => {
-							getSiblings(separator).forEach((el) => el.addClass("is-hidden"));
-							separator.addClass("is-collapsed");
-						}, this.settings.autoHideDelay);
-					}
-				};
-				setTimeout(() => {
+			const getSiblings = rtl ? getPreviousSiblings : getNextSiblings;
+			if (!el) {
+				return;
+			}
+			const separator = el.createDiv(`${className} separator`);
+			rtl && el.prepend(separator);
+			const glyphEl = separator.createDiv("glyph");
+			const glyphName = "plus-with-circle"; // this gets replaced using CSS
+			setIcon(glyphEl, glyphName);
+			separator.addClass("is-collapsed");
+			this.register(() => separator.detach());
+			let hideTimeout: NodeJS.Timeout;
+			separator.onClickEvent((event: MouseEvent) => {
+				if (separator.hasClass("is-collapsed")) {
+					Array.from(el.children).forEach((el) =>
+						el.removeClass("is-hidden"),
+					);
+					separator.removeClass("is-collapsed");
+				} else {
 					getSiblings(separator).forEach((el) => el.addClass("is-hidden"));
 					separator.addClass("is-collapsed");
-				}, 0);
-			}
+				}
+			});
+			el.onmouseenter = (ev) => {
+				if (hideTimeout) clearTimeout(hideTimeout);
+			};
+			el.onmouseleave = (ev) => {
+				if (this.settings.autoHide) {
+					hideTimeout = setTimeout(() => {
+						getSiblings(separator).forEach((el) => el.addClass("is-hidden"));
+						separator.addClass("is-collapsed");
+					}, this.settings.autoHideDelay);
+				}
+			};
+			setTimeout(() => {
+				getSiblings(separator).forEach((el) => el.addClass("is-hidden"));
+				separator.addClass("is-collapsed");
+			}, 0);
 		});
 	}
 
 	setElementIDs(parentEl: HTMLElement, options: GenerateIdOptions) {
 		Array.from(parentEl.children).forEach((child) => {
-			if (child instanceof HTMLElement) {
-				if (!child.getAttribute("data-id")) {
-					child.setAttribute("data-id", generateId(child, options));
-				}
+			if (child instanceof HTMLElement && !child.getAttribute("data-id")) {
+				child.setAttribute("data-id", generateId(child, options));
 			}
 		});
 	}
 
 	setTabBarSorter(element: HTMLElement, leaf: WorkspaceTabs) {
 		this.setElementIDs(element, { useClass: true, useIcon: true });
-		let sorter = Sortable.create(element, {
+		return Sortable.create(element, {
 			group: "leftTabBar",
 			dataIdAttr: "data-id",
 			chosenClass: "bt-sortable-chosen",
@@ -596,11 +589,10 @@ export default class BartenderPlugin extends Plugin {
 				this.app.workspace.requestSaveLayout();
 			},
 		});
-		return sorter;
 	}
 
 	setStatusBarSorter() {
-		let el = document.body.querySelector(
+		const el = document.body.querySelector(
 			"body > div.app-container > div.status-bar",
 		) as HTMLElement;
 		if (el) {
@@ -633,12 +625,12 @@ export default class BartenderPlugin extends Plugin {
 
 	setViewActionSorter(el: HTMLElement, view: View): Sortable | undefined {
 		this.setElementIDs(el, { useClass: true, useIcon: true });
-		let hasSorter = Object.values(el).find((value) =>
+		const hasSorter = Object.values(el).find((value) =>
 			value?.hasOwnProperty("nativeDraggable"),
 		);
 		if (hasSorter) return undefined;
-		let viewType = view?.getViewType() || "unknown";
-		let sortable = new Sortable(el, {
+		const viewType = view?.getViewType() || "unknown";
+		return new Sortable(el, {
 			group: "actionBar",
 			dataIdAttr: "data-id",
 			chosenClass: "bt-sortable-chosen",
@@ -659,11 +651,10 @@ export default class BartenderPlugin extends Plugin {
 				},
 			},
 		});
-		return sortable;
 	}
 
 	setRibbonBarSorter() {
-		let el = document.body.querySelector(
+		const el = document.body.querySelector(
 			"body > div.app-container div.side-dock-actions",
 		) as HTMLElement;
 		if (el) {
@@ -695,47 +686,48 @@ export default class BartenderPlugin extends Plugin {
 	}
 
 	setFileExplorerFilter(headerDom: FileExplorerHeader) {
-		let fileExplorerNav = headerDom.navHeaderEl;
-		if (fileExplorerNav) {
-			let fileExplorerFilter = fileExplorerNav.createDiv(
-				"search-input-container",
-			);
-			fileExplorerNav.insertAdjacentElement("afterend", fileExplorerFilter);
-			let fileExplorerFilterInput = fileExplorerFilter.createEl("input");
-			fileExplorerFilterInput.placeholder = "Type to filter...";
-			fileExplorerFilterInput.type = "text";
-			fileExplorerFilter.hide();
-			let filterScope = new Scope(this.app.scope);
-			fileExplorerFilterInput.onfocus = () => {
-				this.app.keymap.pushScope(filterScope);
-			};
-			fileExplorerFilterInput.onblur = () => {
-				this.app.keymap.popScope(filterScope);
-			};
-			fileExplorerFilterInput.oninput = (ev: InputEvent) => {
-				let fileExplorer = this.getFileExplorer();
-				if (ev.target instanceof HTMLInputElement) {
-					if (ev.target.value.length) {
-						clearButtonEl.show();
-					} else {
-						clearButtonEl.hide();
-					}
-					fileExplorer.tree.infinityScroll.filter = ev.target.value;
-				}
-				fileExplorer.tree.infinityScroll.compute();
-			};
-			let clearButtonEl = fileExplorerFilter.createDiv(
-				"search-input-clear-button",
-				function (el) {
-					el.addEventListener("click", function () {
-						(fileExplorerFilterInput.value = ""), clearButtonEl.hide();
-						fileExplorerFilterInput.focus();
-						fileExplorerFilterInput.dispatchEvent(new Event("input"));
-					}),
-						el.hide();
-				},
-			);
+		const fileExplorerNav = headerDom.navHeaderEl;
+		if (!fileExplorerNav) {
+			return;
 		}
+		const fileExplorerFilter = fileExplorerNav.createDiv(
+			"search-input-container",
+		);
+		fileExplorerNav.insertAdjacentElement("afterend", fileExplorerFilter);
+		const fileExplorerFilterInput = fileExplorerFilter.createEl("input");
+		fileExplorerFilterInput.placeholder = "Type to filter...";
+		fileExplorerFilterInput.type = "text";
+		fileExplorerFilter.hide();
+		const filterScope = new Scope(this.app.scope);
+		fileExplorerFilterInput.onfocus = () => {
+			this.app.keymap.pushScope(filterScope);
+		};
+		fileExplorerFilterInput.onblur = () => {
+			this.app.keymap.popScope(filterScope);
+		};
+		fileExplorerFilterInput.oninput = (ev: InputEvent) => {
+			const fileExplorer = this.getFileExplorer();
+			if (ev.target instanceof HTMLInputElement) {
+				if (ev.target.value.length) {
+					clearButtonEl.show();
+				} else {
+					clearButtonEl.hide();
+				}
+				fileExplorer.tree.infinityScroll.filter = ev.target.value;
+			}
+			fileExplorer.tree.infinityScroll.compute();
+		};
+		const clearButtonEl = fileExplorerFilter.createDiv(
+			"search-input-clear-button",
+			(el) => {
+				el.addEventListener("click", function () {
+					(fileExplorerFilterInput.value = ""), clearButtonEl.hide();
+					fileExplorerFilterInput.focus();
+					fileExplorerFilterInput.dispatchEvent(new Event("input"));
+				}),
+					el.hide();
+			},
+		);
 	}
 
 	setFileExplorerSorter(fileExplorer?: FileExplorerView) {
@@ -748,14 +740,14 @@ export default class BartenderPlugin extends Plugin {
 			fileExplorer.hasCustomSorter
 		)
 			return;
-		let roots = this.getRootFolders(fileExplorer);
+		const roots = this.getRootFolders(fileExplorer);
 		if (!roots || !roots.length) return;
-		for (let root of roots) {
-			let el = root?.childrenEl;
+		for (const root of roots) {
+			const el = root?.childrenEl;
 			if (!el) continue;
 			let draggedItems: HTMLElement[];
 			fileExplorer.hasCustomSorter = true;
-			let dragEnabled = document.body
+			const dragEnabled = document.body
 				.querySelector("div.nav-action-button.drag-to-rearrange")
 				?.hasClass("is-active")
 				? true
@@ -791,14 +783,14 @@ export default class BartenderPlugin extends Plugin {
 							: root.children;
 						if (!_children || !draggedItems?.length) return;
 						let children = _children.map((child) => child.el);
-						let adjacentEl = evt.related;
-						let targetIndex = children.indexOf(adjacentEl);
-						let firstItem = draggedItems.first();
-						let firstItemIndex = children.indexOf(firstItem!);
-						let _draggedItems = draggedItems.slice();
+						const adjacentEl = evt.related;
+						const targetIndex = children.indexOf(adjacentEl);
+						const firstItem = draggedItems.first();
+						const firstItemIndex = children.indexOf(firstItem!);
+						const _draggedItems = draggedItems.slice();
 						if (firstItemIndex > targetIndex) _draggedItems.reverse();
-						for (let item of _draggedItems) {
-							let itemIndex = children.indexOf(item);
+						for (const item of _draggedItems) {
+							const itemIndex = children.indexOf(item);
 							_children = reorderArray(_children, itemIndex, targetIndex);
 							children = reorderArray(children, itemIndex, targetIndex);
 						}
@@ -818,7 +810,7 @@ export default class BartenderPlugin extends Plugin {
 	}
 
 	getFileExplorer() {
-		let fileExplorer: FileExplorerView | undefined = this.app.workspace
+		const fileExplorer: FileExplorerView | undefined = this.app.workspace
 			.getLeavesOfType("file-explorer")
 			?.first()?.view as unknown as FileExplorerView;
 		return fileExplorer;
@@ -829,9 +821,8 @@ export default class BartenderPlugin extends Plugin {
 	): [RootElements | ChildElement] | undefined {
 		if (!fileExplorer) fileExplorer = this.getFileExplorer();
 		if (!fileExplorer) return;
-		let root = fileExplorer.tree?.infinityScroll?.rootEl;
-		let roots = root && this.traverseRoots(root);
-		return roots;
+		const root = fileExplorer.tree?.infinityScroll?.rootEl;
+		return root && this.traverseRoots(root);
 	}
 
 	traverseRoots(
@@ -840,11 +831,11 @@ export default class BartenderPlugin extends Plugin {
 	) {
 		if (!items) items = [root];
 		const supportsVirtualChildren =
-			requireApiVersion && requireApiVersion("0.15.0");
+			requireApiVersion?.("0.15.0");
 		const _children = supportsVirtualChildren
 			? root.vChildren?._children
 			: root.children;
-		for (let child of _children || []) {
+		for (const child of _children || []) {
 			if (child.children || child.vChildren?._children) {
 				items.push(child);
 			}
@@ -854,10 +845,10 @@ export default class BartenderPlugin extends Plugin {
 	}
 
 	toggleFileExplorerSorters(enable: boolean) {
-		let fileExplorer = this.getFileExplorer();
-		let roots = this.getRootFolders(fileExplorer);
+		const fileExplorer = this.getFileExplorer();
+		const roots = this.getRootFolders(fileExplorer);
 		if (roots?.length) {
-			for (let root of roots) {
+			for (const root of roots) {
 				if (root.sorter) {
 					root.sorter.option("sort", enable);
 					root.sorter.option("disabled", !enable);
@@ -867,10 +858,10 @@ export default class BartenderPlugin extends Plugin {
 	}
 
 	cleanupFileExplorerSorters() {
-		let fileExplorer = this.getFileExplorer();
-		let roots = this.getRootFolders(fileExplorer);
+		const fileExplorer = this.getFileExplorer();
+		const roots = this.getRootFolders(fileExplorer);
 		if (roots?.length) {
-			for (let root of roots) {
+			for (const root of roots) {
 				if (root.sorter) {
 					root.sorter.destroy();
 					delete root.sorter;
