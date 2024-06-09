@@ -20,6 +20,7 @@ import {
   type WorkspaceSplit,
   WorkspaceTabs,
   requireApiVersion,
+  TAbstractFile,
 } from "obsidian";
 
 import Sortable, { MultiDrag } from "sortablejs";
@@ -60,6 +61,44 @@ export default class BartenderPlugin extends Plugin {
     this.registerEventHandlers();
     this.registerSettingsTab();
     this.initialize();
+
+    this.app.vault.on("rename", async (file, oldFile) => {
+      // change the path in the settings
+      //first check if folder and search this path in the settings
+      console.log("file", file, "oldFile", oldFile);
+      for (const key in this.settings.fileExplorerOrder) {
+        for (const item of this.settings.fileExplorerOrder[key]) {
+          if (item === oldFile) {
+            const index = this.settings.fileExplorerOrder[key].indexOf(item);
+            this.settings.fileExplorerOrder[key][index] = file.path;
+          }
+        }
+        if (key.startsWith(oldFile)) {
+          this.settings.fileExplorerOrder[file.path] =
+            this.settings.fileExplorerOrder[key];
+          delete this.settings.fileExplorerOrder[key];
+        }
+      }
+      await this.saveSettings();
+    });
+
+    this.app.vault.on("delete", async (file) => {
+      // remove the path from the settings
+      console.log("file", file);
+      for (const key in this.settings.fileExplorerOrder) {
+        for (const item of this.settings.fileExplorerOrder[key]) {
+          if (item === file.path) {
+            const index = this.settings.fileExplorerOrder[key].indexOf(item);
+            console.log("index", index);
+            this.settings.fileExplorerOrder[key].splice(index, 1);
+          }
+        }
+        if (key.startsWith(file.path)) {
+          delete this.settings.fileExplorerOrder[key];
+        }
+      }
+      await this.saveSettings();
+    });
   }
 
   async loadSettings() {
@@ -76,9 +115,6 @@ export default class BartenderPlugin extends Plugin {
     const fileExplorer = plugin.app.viewRegistry.viewByType["file-explorer"](
       leaf
     ) as FileExplorerView;
-    // @ts-ignore
-    const tmpFolder = new TFolder(Vault, "");
-    const Folder = fileExplorer.createFolderDom(tmpFolder).constructor;
     this.register(
       around(fileExplorer.constructor.prototype, {
         getSortedFolderItems: (old: any) => {
@@ -91,20 +127,7 @@ export default class BartenderPlugin extends Plugin {
         },
       })
     );
-    this.register(
-      around(Folder.prototype, {
-        sort(old: any) {
-          return function (...args: any[]) {
-            /* const order = plugin.settings.fileExplorerOrder[this.file.path];
-            return plugin.settings.sortOrder === "custom"
-              ? folderSort.call(this, order, plugin.settings, ...args)
-              : */
 
-            old.call(this, ...args);
-          };
-        },
-      })
-    );
     leaf.detach();
   }
 
