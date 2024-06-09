@@ -1,13 +1,15 @@
 {
   "name": "obsidian-bartender",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "description": "Allows for rearranging the elements in the status bar and sidebar ribbon",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
     "build": "node esbuild.config.mjs --production",
     "dev:prod": "node esbuild.config.mjs --vault",
-    "lint": "pnpm biome lint --apply src/"
+    "lint": "pnpm biome lint --apply src/",
+    "prebuild": "tsc",
+    "bump": "node commit-and-tag-version.mjs"
   },
   "keywords": [],
   "author": "",
@@ -27,10 +29,13 @@
     "obsidian": "1.5.7-1",
     "sortablejs": "^1.15.2",
     "tslib": "2.3.1",
-    "typescript": "4.4.4"
+    "typescript": "5.4.5"
   },
   "dependencies": {
+    "ansi-colors": "^4.1.3",
     "commander": "^12.1.0",
+    "commit-and-tag-version": "^12.4.1",
+    "dedent": "^1.5.3",
     "dotenv": "^16.4.5",
     "fuse.js": "^6.6.2"
   }
