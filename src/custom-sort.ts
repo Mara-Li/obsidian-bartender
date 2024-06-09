@@ -1,6 +1,11 @@
-
-import {Menu, type TAbstractFile, type TFile, TFolder, requireApiVersion, setIcon} from "obsidian";
-import type {BartenderSettings} from "./settings";
+import {
+  Menu,
+  type TAbstractFile,
+  type TFile,
+  TFolder,
+  setIcon,
+} from "obsidian";
+import type { BartenderSettings } from "./settings";
 
 const Collator = new Intl.Collator(undefined, {
   usage: "sort",
@@ -31,7 +36,6 @@ const Sorter = {
 
 const Translate = i18next.t.bind(i18next);
 
-
 const sortOptionStrings = {
   alphabetical: "plugins.file-explorer.label-sort-a-to-z",
   alphabeticalReverse: "plugins.file-explorer.label-sort-z-to-a",
@@ -49,15 +53,24 @@ const sortOptionGroups = [
   ["custom"],
 ];
 
-export const folderSort = function (order: string[], foldersOnBottom?: boolean) {
-  const fileExplorer = this.view;
-  const folderContents = this.file.children.slice();
-  folderContents.sort(function (firstEl: TFile | TFolder, secondEl: TFile | TFolder) {
+/**
+ * For the moment, we copy the original function
+ * Will be modify to add the custom sort after, but first I need to understand how it works
+ * @param e
+ */
+export const folderSortV2 = function (
+  settings: BartenderSettings,
+  e: any,
+  foldersOnBottom?: boolean
+) {
+  const children = e.children.slice();
+  children.sort((firstEl: TAbstractFile, secondEl: TAbstractFile) => {
     let firstIsFolder;
     let secondIsFolder;
     if (
       foldersOnBottom &&
-      ((firstIsFolder = firstEl instanceof TFolder) || (secondIsFolder = secondEl instanceof TFolder))
+      ((firstIsFolder = firstEl instanceof TFolder) ||
+        (secondIsFolder = secondEl instanceof TFolder))
     ) {
       return firstIsFolder && !secondIsFolder
         ? 1
@@ -65,25 +78,39 @@ export const folderSort = function (order: string[], foldersOnBottom?: boolean) 
         ? -1
         : Collator(firstEl.name, secondEl.name);
     }
-    if (!order) return Collator(firstEl.name, secondEl.name);
 
+    const order =
+      firstEl.parent &&
+      secondEl.parent &&
+      firstEl.parent === secondEl.parent &&
+      !firstEl.parent.isRoot()
+        ? settings.fileExplorerOrder[firstEl.parent.path] || undefined
+        : settings.fileExplorerOrder[""];
+    if (!order) return Collator(firstEl.name, secondEl.name);
     const index1 = order.indexOf(firstEl.path);
     const index2 = order.indexOf(secondEl.path);
 
-    return (index1 > -1 ? index1 : Infinity) - (index2 > -1 ? index2 : Infinity);
+    return (
+      (index1 > -1 ? index1 : Infinity) - (index2 > -1 ? index2 : Infinity)
+    );
   });
-  const items = folderContents
-    .map((child: TAbstractFile) => fileExplorer.fileItems[child.path])
-    .filter((f: TAbstractFile) => f);
-
-  if (requireApiVersion?.("0.15.0")) {
-    this.vChildren.setChildren(items);
-  } else {
-    this.children = items;
+  const i = [];
+  for (let r = 0, o = children; r < o.length; r++) {
+    const a = o[r];
+    const s = this.fileItems[a.path];
+    s && i.push(s);
   }
+
+  return i;
 };
 
-export const addSortButton = function (settings:BartenderSettings, sorter: any, sortOption: any,setSortOrder:any,currentSort:any) {
+export const addSortButton = function (
+  settings: BartenderSettings,
+  sorter: any,
+  sortOption: any,
+  setSortOrder: any,
+  currentSort: any
+) {
   const plugin = this;
   const sortEl = this.addNavButton(
     settings.sortOrder === "custom" ? "move" : "arrow-up-narrow-wide",
@@ -92,32 +119,42 @@ export const addSortButton = function (settings:BartenderSettings, sorter: any, 
       event.preventDefault();
       const menu = new Menu();
       for (
-        let currentSortOption = settings.sortOrder, groupIndex = 0, _sortOptionGroups = sortOptionGroups;
+        let currentSortOption = settings.sortOrder,
+          groupIndex = 0,
+          _sortOptionGroups = sortOptionGroups;
         groupIndex < _sortOptionGroups.length;
         groupIndex++
       ) {
         for (
-          let addMenuItem = function (_sortOption: keyof typeof sortOptionStrings) {
+          let addMenuItem = (_sortOption: keyof typeof sortOptionStrings) => {
               const label = Translate(sortOptionStrings[_sortOption]);
-              menu.addItem((item) => item
-              .setTitle(label)
-              .setChecked(_sortOption === currentSortOption)
-              .onClick(() => {
-                if (_sortOption !== currentSortOption) {
-                  sortEl.setAttribute("data-sort-method", _sortOption);
-                  plugin.app.workspace.trigger("file-explorer-sort-change", _sortOption);
-                }
-                setSortOrder(_sortOption);
-                if (_sortOption === "custom") setIcon(sortEl, "move");
-                else setIcon(sortEl, "arrow-up-narrow-wide");
-              }));
+              menu.addItem((item) =>
+                item
+                  .setTitle(label)
+                  .setChecked(_sortOption === currentSortOption)
+                  .onClick(() => {
+                    console.log(_sortOption, currentSortOption);
+                    if (_sortOption !== currentSortOption) {
+                      sortEl.setAttribute("data-sort-method", _sortOption);
+                      plugin.app.workspace.trigger(
+                        "file-explorer-sort-change",
+                        _sortOption
+                      );
+                    }
+                    setSortOrder(_sortOption);
+                    if (_sortOption === "custom") setIcon(sortEl, "move");
+                    else setIcon(sortEl, "arrow-up-narrow-wide");
+                  })
+              );
             },
             itemIndex = 0,
             sortOptionGroup = _sortOptionGroups[groupIndex];
           itemIndex < sortOptionGroup.length;
           itemIndex++
         ) {
-          addMenuItem(sortOptionGroup[itemIndex] as keyof typeof sortOptionStrings);
+          addMenuItem(
+            sortOptionGroup[itemIndex] as keyof typeof sortOptionStrings
+          );
         }
         menu.addSeparator();
       }
@@ -127,12 +164,16 @@ export const addSortButton = function (settings:BartenderSettings, sorter: any, 
   setTimeout(() => {
     sortEl.setAttribute("data-sort-method", settings.sortOrder);
   }, 100);
-  this.addNavButton("three-horizontal-bars", "Drag to rearrange", function (event: MouseEvent) {
-    event.preventDefault();
-    const value = !this.hasClass("is-active");
-    this.toggleClass("is-active", value);
-    plugin.app.workspace.trigger("file-explorer-draggable-change", value);
-  }).addClass("drag-to-rearrange");
+  this.addNavButton(
+    "three-horizontal-bars",
+    "Drag to rearrange",
+    function (event: MouseEvent) {
+      event.preventDefault();
+      const value = !this.hasClass("is-active");
+      this.toggleClass("is-active", value);
+      plugin.app.workspace.trigger("file-explorer-draggable-change", value);
+    }
+  ).addClass("drag-to-rearrange");
   this.addNavButton("search", "Filter items", function (event: MouseEvent) {
     event.preventDefault();
     const value = !this.hasClass("is-active");

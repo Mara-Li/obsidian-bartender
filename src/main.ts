@@ -23,7 +23,7 @@ import {
 } from "obsidian";
 
 import Sortable, { MultiDrag } from "sortablejs";
-import { addSortButton, folderSort } from "./custom-sort";
+import { addSortButton, folderSortV2 } from "./custom-sort";
 import {
   type BartenderSettings,
   DEFAULT_SETTINGS,
@@ -80,13 +80,27 @@ export default class BartenderPlugin extends Plugin {
     const tmpFolder = new TFolder(Vault, "");
     const Folder = fileExplorer.createFolderDom(tmpFolder).constructor;
     this.register(
+      around(fileExplorer.constructor.prototype, {
+        getSortedFolderItems: (old: any) => {
+          return function (...args: any[]) {
+            if (plugin.settings.sortOrder === "custom") {
+              return folderSortV2.call(this, plugin.settings, ...args);
+            }
+            return old.call(this, ...args);
+          };
+        },
+      })
+    );
+    this.register(
       around(Folder.prototype, {
         sort(old: any) {
           return function (...args: any[]) {
-            const order = plugin.settings.fileExplorerOrder[this.file.path];
+            /* const order = plugin.settings.fileExplorerOrder[this.file.path];
             return plugin.settings.sortOrder === "custom"
-              ? folderSort.call(this, order, ...args)
-              : old.call(this, ...args);
+              ? folderSort.call(this, order, plugin.settings, ...args)
+              : */
+
+            old.call(this, ...args);
           };
         },
       })
@@ -717,7 +731,7 @@ export default class BartenderPlugin extends Plugin {
     const clearButtonEl = fileExplorerFilter.createDiv(
       "search-input-clear-button",
       (el) => {
-        el.addEventListener("click", function () {
+        el.addEventListener("click", () => {
           (fileExplorerFilterInput.value = ""), clearButtonEl.hide();
           fileExplorerFilterInput.focus();
           fileExplorerFilterInput.dispatchEvent(new Event("input"));
@@ -749,9 +763,8 @@ export default class BartenderPlugin extends Plugin {
         ?.hasClass("is-active")
         ? true
         : false;
-      const path = root.file?.path ?? "root";
+      const path = root.file?.path ?? "";
 
-      console.log("Creating Sortable for", path);
       root.sorter = Sortable.create(el!, {
         group: `fileExplorer${path}`,
         forceFallback: true,
@@ -765,7 +778,6 @@ export default class BartenderPlugin extends Plugin {
         sort: dragEnabled, // init with dragging disabled. the nav bar button will toggle on/off
         animation: ANIMATION_DURATION,
         onStart: (evt) => {
-          console.log(evt);
           draggedItems = evt.items.length ? evt.items : [evt.item];
         },
         onMove: (evt) => {
