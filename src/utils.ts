@@ -2,7 +2,7 @@ import Fuse from "fuse.js";
 import { ChildElement, requireApiVersion } from "obsidian";
 
 export function getPreviousSiblings(el: HTMLElement, filter?: (el: HTMLElement) => boolean): HTMLElement[] {
-  var sibs = [];
+  const sibs = [];
   while ((el = el.previousSibling as HTMLElement)) {
     if (el.nodeType === 3) continue; // text node
     if (!filter || filter(el)) sibs.push(el);
@@ -10,7 +10,7 @@ export function getPreviousSiblings(el: HTMLElement, filter?: (el: HTMLElement) 
   return sibs;
 }
 export function getNextSiblings(el: HTMLElement, filter?: (el: HTMLElement) => boolean): HTMLElement[] {
-  var sibs = [];
+  const sibs = [];
   while ((el = el.nextSibling as HTMLElement)) {
     if (el.nodeType === 3) continue; // text node
     if (!filter || filter(el)) sibs.push(el);
@@ -27,13 +27,13 @@ export interface GenerateIdOptions {
 }
 
 export function generateId(el: HTMLElement, options?: GenerateIdOptions) {
-  let classes = options?.useClass
+  const classes = options?.useClass
     ? Array.from(el.classList)
         .filter(c => !c.startsWith("is-"))
         .sort()
         .join(" ")
     : "";
-  let str =
+  const str =
     (options?.useTag ? el.tagName : "") +
     (options?.useClass ? classes : "") +
     (options?.useText ? el.textContent : "") +
@@ -105,7 +105,7 @@ export const getItems = (items: ChildElement[]): ChildElement[] => {
 
 type NestedObject = { [key: string]: string | NestedObject };
 
-export const highlight = (fuseSearchResult: any, highlightClassName: string = "suggestion-highlight") => {
+export const highlight = (fuseSearchResult: any, highlightClassName = "suggestion-highlight") => {
   const set = (obj: NestedObject, path: string, value: any) => {
     const pathValue = path.split(".");
     let i;
@@ -118,7 +118,7 @@ export const highlight = (fuseSearchResult: any, highlightClassName: string = "s
   };
 
   const generateHighlightedText = (inputText: string, regions: number[][] = []) => {
-    let result = regions
+    const result = regions
       .reduce((str, [start, end]) => {
         str[start] = `<span class="${highlightClassName}">${str[start]}`;
         str[end] = `${str[end]}</span>`;
@@ -152,7 +152,7 @@ export function removeExt(obj: any) {
 }
 
 export function getFn(obj: any, path: string[]) {
-  var value = Fuse.config.getFn(obj, path);
+  const value = Fuse.config.getFn(obj, path);
   if (Array.isArray(value)) {
     return value.map(el => removeExt(el));
   }
