@@ -11,7 +11,9 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^16.11.6",
+    "@types/electron": "npm:@ophidian/electron-types",
+    "@types/node": "^20.14.2",
+    "@types/obsidian-typings": "npm:obsidian-typings@^1.1.6",
     "@types/sortablejs": "^1.10.7",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
