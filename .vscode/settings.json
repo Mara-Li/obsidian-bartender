@@ -1,0 +1,5 @@
+{
+  "biome.enabled": true,
+  "biome.rename": true,
+  "editor.defaultFormatter": "biomejs.biome"
+}
