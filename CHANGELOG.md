@@ -1,3 +1,8 @@
+## [0.5.13](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.12...0.5.13) (2024-06-10)
+### Features
+
+* support to disable collapse ([2184b78](https://github.com/Mara-Li/obsidian-bartender/commit/2184b78ce69ea75dc735a1d5aef335ff2752148b))
+
 ## [0.5.12](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.11...0.5.12) (2024-06-09)
 ### Features
 
