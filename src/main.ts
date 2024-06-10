@@ -23,12 +23,8 @@ import {
 } from "obsidian";
 
 import Sortable, { MultiDrag } from "sortablejs";
-import { addSortButton, folderSort } from "./file-explorer/custom-sort";
-import {
-  BartenderSettings,
-  DEFAULT_SETTINGS,
-  SettingTab,
-} from "./settings/settings";
+import { addSortButton, folderSortV2 } from "./file-explorer/custom-sort";
+import { type BartenderSettings, DEFAULT_SETTINGS, SettingTab } from "./settings/settings";
 import {
   generateId,
   GenerateIdOptions,
@@ -76,21 +72,19 @@ export default class BartenderPlugin extends Plugin {
     const fileExplorer = plugin.app.viewRegistry.viewByType["file-explorer"](
       leaf
     ) as FileExplorerView;
-    // @ts-ignore
-    const tmpFolder = new TFolder(Vault, "");
-    const Folder = fileExplorer.createFolderDom(tmpFolder).constructor;
     this.register(
-      around(Folder.prototype, {
-        sort(old: any) {
+			around(fileExplorer.constructor.prototype, {
+				getSortedFolderItems: (old: any) => {
           return function (...args: any[]) {
-            const order = plugin.settings.fileExplorerOrder[this.file.path];
-            return plugin.settings.sortOrder === "custom"
-              ? folderSort.call(this, order, ...args)
-              : old.call(this, ...args);
+						if (plugin.settings.sortOrder === "custom") {
+							return folderSortV2.call(this, plugin.settings, ...args);
+						}
+						return old.call(this, ...args);
           };
         },
       })
     );
+
     leaf.detach();
   }
 
@@ -746,9 +740,8 @@ export default class BartenderPlugin extends Plugin {
         ?.hasClass("is-active")
         ? true
         : false;
-      const path = root.file?.path ?? "root";
+			const path = root.file?.path ?? "";
 
-      console.log("Creating Sortable for", path);
       root.sorter = Sortable.create(el!, {
         group: `fileExplorer${path}`,
         forceFallback: true,
@@ -762,7 +755,6 @@ export default class BartenderPlugin extends Plugin {
         sort: dragEnabled, // init with dragging disabled. the nav bar button will toggle on/off
         animation: ANIMATION_DURATION,
         onStart: (evt) => {
-          console.log(evt);
           draggedItems = evt.items.length ? evt.items : [evt.item];
         },
         onMove: (evt) => {
