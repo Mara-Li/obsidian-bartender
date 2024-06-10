@@ -12,7 +12,15 @@
     "bump": "node commit-and-tag-version.mjs"
   },
   "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mara-Li/obsidian-bartender/"
+  },
+  "author": "nothingislost",
+  "contributors": [
+    "Mara-Li",
+    "zansbang"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "1.8.0",

@@ -4,7 +4,7 @@
   "version": "0.5.12",
   "minAppVersion": "1.2.0",
   "description": "Allows for rearranging the elements in the status bar and sidebar ribbon",
-  "author": "NothingIsLost",
-  "authorUrl": "https://github.com/nothingislost",
+  "author": "NothingIsLost, zansbang, Mara-Li",
+  "authorUrl": "https://github.com/Mara-Li",
   "isDesktopOnly": false
 }
