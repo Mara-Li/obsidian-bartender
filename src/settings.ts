@@ -10,6 +10,7 @@ export interface BartenderSettings {
   autoHideDelay: number;
   dragDelay: number;
   sortOrder: string;
+  useCollapse: boolean;
 }
 
 export const DEFAULT_SETTINGS: BartenderSettings = {
@@ -21,6 +22,7 @@ export const DEFAULT_SETTINGS: BartenderSettings = {
   autoHideDelay: 2000,
   dragDelay: 200,
   sortOrder: "alphabetical",
+  useCollapse: true,
 };
 
 export class SettingTab extends PluginSettingTab {
@@ -35,6 +37,18 @@ export class SettingTab extends PluginSettingTab {
     const { containerEl } = this;
 
     containerEl.empty();
+
+    new Setting(containerEl)
+      .setName("Support collapse")
+      .setDesc("Add a button to collapse the ribbon and status bar items")
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.useCollapse).onChange((value) => {
+          this.plugin.settings.useCollapse = value;
+          this.plugin.saveSettings();
+          this.display();
+        })
+      );
+    if (this.plugin.settings.useCollapse) { 
 
     new Setting(containerEl)
       .setName("Auto Collapse")
@@ -62,6 +76,7 @@ export class SettingTab extends PluginSettingTab {
           this.plugin.saveSettings();
         });
       });
+    }
 
     new Setting(containerEl)
       .setName("Drag Start Delay (ms)")
