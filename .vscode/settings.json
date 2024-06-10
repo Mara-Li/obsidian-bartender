@@ -1,5 +1,6 @@
 {
   "biome.enabled": true,
   "biome.rename": true,
-  "editor.defaultFormatter": "biomejs.biome"
+  "editor.defaultFormatter": "biomejs.biome",
+  "eslint.enable": false
 }
