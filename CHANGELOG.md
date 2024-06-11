@@ -1,3 +1,5 @@
+## [0.5.14](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.13...0.5.14) (2024-06-11)
+
 ## [0.5.13](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.12...0.5.13) (2024-06-10)
 ### Features
 
