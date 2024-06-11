@@ -1,8 +1,21 @@
 # Obsidian Bartender
 
+> [!WARNING]
+> The plugin is heavely experimental and use some internal function of Obsidian to make it works. It can break at any update of Obsidian.
+> As I'm not the original maintener some part of the code are obscure to me. I will try to fix any bug you can [make](https://github.com/Mara-Li/obsidian-bartender/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml&title=%5BBug%5D%3A+), but new feature can be difficult to support.
+
 Take control of your Obsidian workspace by organizing, rearranging, and filtering the file explorer. It also add collapse (optionally) in the status bar and ribbon.
 
 ## File Explorer
+
+To rearrange :
+- Click on the sort icon ![image](https://github.com/Mara-Li/obsidian-bartender/assets/30244939/146d3e09-43f6-4b7f-8509-ed15d4427ccf)
+- Choose "custom", the icon will change to: ![image](https://github.com/Mara-Li/obsidian-bartender/assets/30244939/9bb320f1-0e52-46cd-8e70-c02181c52619) and a burger button will appear next to it: ![image](https://github.com/Mara-Li/obsidian-bartender/assets/30244939/8c41438c-8690-41e2-a4a2-83c29d203486)
+- Click on the burger
+- Now, drag and drop the folder or files you want to move.
+- When you are pleased, click again on the burger to disable rearranging.
+- Keep the sort option on custom to keep your rearrange. If you want to return at any sort of Obsidian, just click again on the "move" icon and choose your sort. 
+
 ### Filtering
 
 The file explorer can be filtered using fuse.js extended search syntax:
@@ -32,3 +45,7 @@ White space acts as an **AND** operator, while a single pipe (`|`) character act
     - In Obsidian settings, at "Community Plugin", reload the plugin list
     - Enable the plugin (or reload it if already installed)
 
+## Credit
+
+- <ins>Original work</ins>: [NothingIsLost](https://github.com/nothingislost/obsidian-bartender/)
+- <ins>Update for Obsidian 1.5.8</ins>: [zansbang](https://github.com/zansbang/obsidian-bartender)
