@@ -58,7 +58,6 @@ export default class BartenderPlugin extends Plugin {
 		this.app.vault.on("rename", async (file, oldFile) => {
 			// change the path in the settings
 			//first check if folder and search this path in the settings
-			console.log("file", file, "oldFile", oldFile);
 			for (const key in this.settings.fileExplorerOrder) {
 				for (const item of this.settings.fileExplorerOrder[key]) {
 					if (item === oldFile) {
@@ -77,12 +76,10 @@ export default class BartenderPlugin extends Plugin {
 
 		this.app.vault.on("delete", async (file) => {
 			// remove the path from the settings
-			console.log("file", file);
 			for (const key in this.settings.fileExplorerOrder) {
 				for (const item of this.settings.fileExplorerOrder[key]) {
 					if (item === file.path) {
 						const index = this.settings.fileExplorerOrder[key].indexOf(item);
-						console.log("index", index);
 						this.settings.fileExplorerOrder[key].splice(index, 1);
 					}
 				}
@@ -191,7 +188,7 @@ export default class BartenderPlugin extends Plugin {
 	fileExplorerFilter = function (fileExplorer: FileExplorerView) {
 		const supportsVirtualChildren = requireApiVersion?.("0.15.0");
 		/*    let leaf = this?.rootEl?.view?.app.workspace.getLeaf(true);
-    let fileExplorer = this?.rootEl?.view?.app.viewRegistry.viewByType["file-explorer"](leaf) as FileExplorerView;*/
+	let fileExplorer = this?.rootEl?.view?.app.viewRegistry.viewByType["file-explorer"](leaf) as FileExplorerView;*/
 
 		//let fileExplorer = this?.rootEl?.fileExplorer;
 

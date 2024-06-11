@@ -75,15 +75,15 @@ export const folderSortV2 = function (
       return firstIsFolder && !secondIsFolder
         ? 1
         : secondIsFolder && !firstIsFolder
-        ? -1
-        : Collator(firstEl.name, secondEl.name);
+          ? -1
+          : Collator(firstEl.name, secondEl.name);
     }
 
     const order =
       firstEl.parent &&
-      secondEl.parent &&
-      firstEl.parent === secondEl.parent &&
-      !firstEl.parent.isRoot()
+        secondEl.parent &&
+        firstEl.parent === secondEl.parent &&
+        !firstEl.parent.isRoot()
         ? settings.fileExplorerOrder[firstEl.parent.path] || undefined
         : settings.fileExplorerOrder[""];
     if (!order) return Collator(firstEl.name, secondEl.name);
@@ -120,35 +120,34 @@ export const addSortButton = function (
       const menu = new Menu();
       for (
         let currentSortOption = settings.sortOrder,
-          groupIndex = 0,
-          _sortOptionGroups = sortOptionGroups;
+        groupIndex = 0,
+        _sortOptionGroups = sortOptionGroups;
         groupIndex < _sortOptionGroups.length;
         groupIndex++
       ) {
         for (
           let addMenuItem = (_sortOption: keyof typeof sortOptionStrings) => {
-              const label = Translate(sortOptionStrings[_sortOption]);
-              menu.addItem((item) =>
-                item
-                  .setTitle(label)
-                  .setChecked(_sortOption === currentSortOption)
-                  .onClick(() => {
-                    console.log(_sortOption, currentSortOption);
-                    if (_sortOption !== currentSortOption) {
-                      sortEl.setAttribute("data-sort-method", _sortOption);
-                      plugin.app.workspace.trigger(
-                        "file-explorer-sort-change",
-                        _sortOption
-                      );
-                    }
-                    setSortOrder(_sortOption);
-                    if (_sortOption === "custom") setIcon(sortEl, "move");
-                    else setIcon(sortEl, "arrow-up-narrow-wide");
-                  })
-              );
-            },
-            itemIndex = 0,
-            sortOptionGroup = _sortOptionGroups[groupIndex];
+            const label = Translate(sortOptionStrings[_sortOption]);
+            menu.addItem((item) =>
+              item
+                .setTitle(label)
+                .setChecked(_sortOption === currentSortOption)
+                .onClick(() => {
+                  if (_sortOption !== currentSortOption) {
+                    sortEl.setAttribute("data-sort-method", _sortOption);
+                    plugin.app.workspace.trigger(
+                      "file-explorer-sort-change",
+                      _sortOption
+                    );
+                  }
+                  setSortOrder(_sortOption);
+                  if (_sortOption === "custom") setIcon(sortEl, "move");
+                  else setIcon(sortEl, "arrow-up-narrow-wide");
+                })
+            );
+          },
+          itemIndex = 0,
+          sortOptionGroup = _sortOptionGroups[groupIndex];
           itemIndex < sortOptionGroup.length;
           itemIndex++
         ) {
