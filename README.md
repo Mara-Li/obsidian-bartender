@@ -1,10 +1,22 @@
-## Obsidian Bartender
+# Obsidian Bartender
 
-Take control of your Obsidian workspace by organizing, rearranging, and filtering nav bars, ribbon bars, status bars, and the file explorer.
+> [!WARNING]
+> The plugin is heavely experimental and use some internal function of Obsidian to make it works. It can break at any update of Obsidian.
+> As I'm not the original maintener some part of the code are obscure to me. I will try to fix any bug you can [make](https://github.com/Mara-Li/obsidian-bartender/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml&title=%5BBug%5D%3A+), but new feature can be difficult to support.
 
-### File Explorer
+Take control of your Obsidian workspace by organizing, rearranging, and filtering the file explorer. It also add collapse (optionally) in the status bar and ribbon.
 
-#### Filtering
+## File Explorer
+
+To rearrange :
+- Click on the sort icon ![image](https://github.com/Mara-Li/obsidian-bartender/assets/30244939/146d3e09-43f6-4b7f-8509-ed15d4427ccf)
+- Choose "custom", the icon will change to: ![image](https://github.com/Mara-Li/obsidian-bartender/assets/30244939/9bb320f1-0e52-46cd-8e70-c02181c52619) and a burger button will appear next to it: ![image](https://github.com/Mara-Li/obsidian-bartender/assets/30244939/8c41438c-8690-41e2-a4a2-83c29d203486)
+- Click on the burger
+- Now, drag and drop the folder or files you want to move.
+- When you are pleased, click again on the burger to disable rearranging.
+- Keep the sort option on custom to keep your rearrange. If you want to return at any sort of Obsidian, just click again on the "move" icon and choose your sort. 
+
+### Filtering
 
 The file explorer can be filtered using fuse.js extended search syntax:
 
@@ -23,19 +35,17 @@ White space acts as an **AND** operator, while a single pipe (`|`) character act
 
 White space acts as an **AND** operator, while a single pipe (`|`) character acts as an **OR** operator.
 
-### Installing the plugin using BRAT
+## Installation
 
-1. Install the BRAT plugin
-    1. Open `Settings` -> `Community Plugins`
-    2. Disable safe mode, if enabled
-    3. *Browse*, and search for "BRAT" 
-    4. Install the latest version of **Obsidian 42 - BRAT**
-2. Open BRAT settings (`Settings` -> `Obsidian 42 - BRAT`)
-    1. Scroll to the `Beta Plugin List` section
-    2. `Add Beta Plugin`
-    3. Specify this repository: `nothingislost/obsidian-bartender`
-3. Enable the `Bartender` plugin (`Settings` -> `Community Plugins`)
+- [x] Using [BRAT](https://tfthacker.com/BRAT) with `https://github.com/mara-li/obsidian-bartender`
+      → Or copy and open `obsidian://brat?plugin=mara-li/obsidian-bartender` in your explorer or browser. It will automatically open Obsidian and install the plugin.
+- [x] From the release page: 
+    - Download the latest release
+    - Unzip `obsidian-bartender.zip` in `.obsidian/plugins/` path
+    - In Obsidian settings, at "Community Plugin", reload the plugin list
+    - Enable the plugin (or reload it if already installed)
 
-### Manually installing the plugin
+## Credit
 
-- Copy over `main.js`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/obsidian-bartender/`.
+- <ins>Original work</ins>: [NothingIsLost](https://github.com/nothingislost/obsidian-bartender/)
+- <ins>Update for Obsidian 1.5.8</ins>: [zansbang](https://github.com/zansbang/obsidian-bartender)
