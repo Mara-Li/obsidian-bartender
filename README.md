@@ -52,4 +52,4 @@ White space acts as an **AND** operator, while a single pipe (`|`) character act
 - <ins>Update for Obsidian 1.5.8</ins>: [zansbang](https://github.com/zansbang/obsidian-bartender)
 
 ---
-<a style="text-align: right;" href="https://discord.gg/EXADYbWuMH">Discord server support</a>
+<a style="text-align: right;display: inline-block" href="https://discord.gg/EXADYbWuMH">Discord server support</a>
