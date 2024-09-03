@@ -3,9 +3,10 @@ import {
   type TAbstractFile,
   type TFile,
   TFolder,
-  setIcon,
+  setIcon
 } from "obsidian";
 import type { BartenderSettings } from "./settings";
+import type BartenderPlugin from "./main";
 
 const Collator = new Intl.Collator(undefined, {
   usage: "sort",
@@ -56,7 +57,9 @@ const sortOptionGroups = [
 /**
  * For the moment, we copy the original function
  * Will be modify to add the custom sort after, but first I need to understand how it works
+ * @param settings
  * @param e
+ * @param foldersOnBottom
  */
 export const folderSortV2 = function (
   settings: BartenderSettings,
@@ -104,16 +107,39 @@ export const folderSortV2 = function (
   return i;
 };
 
+function addButton(icon: "move" | "arrow-up-narrow-wide" | "three-horizontal-bars" | "search", addSortButton: any, title: string, onClick: (event: MouseEvent) => void) {
+  const leaf = addSortButton.app.workspace.getLeavesOfType("file-explorer")?.first()?.view;
+  const button = createDiv({
+      cls: "clickable-icon nav-action-button custom-sort",
+      attr: {
+        "aria-label": title,
+      },
+    });
+    setIcon(button, icon);
+    button.addEventListener("click", onClick);
+  if (leaf) {
+    const oldChild = leaf.containerEl.querySelector("div.nav-buttons-container").querySelectorAll(`[aria-label="${title}"]`);
+    for (let i = 0; i < oldChild.length; i++) {
+      if (oldChild[i].hasClass("custom-sort")) oldChild[i].remove();
+      else oldChild[i].addClass("hide");
+    }
+    leaf.containerEl.querySelector("div.nav-buttons-container")?.appendChild(button);
+  }
+  return button;
+}
+
 export const addSortButton = function (
-  settings: BartenderSettings,
-  sorter: any,
+  bartender: BartenderPlugin,
+  _sorter: any,
   sortOption: any,
   setSortOrder: any,
-  currentSort: any
+  _currentSort: any
 ) {
   const plugin = this;
-  const sortEl = this.addNavButton(
+  const settings = bartender.settings;
+  const sortEl = addButton(
     settings.sortOrder === "custom" ? "move" : "arrow-up-narrow-wide",
+    this,
     Translate("plugins.file-explorer.action-change-sort"),
     (event: MouseEvent) => {
       event.preventDefault();
@@ -139,10 +165,14 @@ export const addSortButton = function (
                       "file-explorer-sort-change",
                       _sortOption
                     );
+                    //force the sort with the new sort method
+                    const leaf = plugin.app.workspace.getLeavesOfType("file-explorer")?.first()?.view;
+                    if (leaf) leaf.sort();
                   }
-                  setSortOrder(_sortOption);
+                  //setSortOrder(_sortOption);
                   if (_sortOption === "custom") setIcon(sortEl, "move");
                   else setIcon(sortEl, "arrow-up-narrow-wide");
+                  
                 })
             );
           },
@@ -163,8 +193,9 @@ export const addSortButton = function (
   setTimeout(() => {
     sortEl.setAttribute("data-sort-method", settings.sortOrder);
   }, 100);
-  this.addNavButton(
+  addButton(
     "three-horizontal-bars",
+    this,
     "Drag to rearrange",
     function (event: MouseEvent) {
       event.preventDefault();
@@ -173,14 +204,13 @@ export const addSortButton = function (
       plugin.app.workspace.trigger("file-explorer-draggable-change", value);
     }
   ).addClass("drag-to-rearrange");
-  this.addNavButton("search", "Filter items", function (event: MouseEvent) {
+  addButton("search", this, "Filter items", function (event: MouseEvent) {
     event.preventDefault();
     const value = !this.hasClass("is-active");
     this.toggleClass("is-active", value);
     const filterEl = document.body.querySelector(
       '.workspace-leaf-content[data-type="file-explorer"] .search-input-container > input'
     ) as HTMLInputElement;
-
     if (filterEl && !value) {
       filterEl.parentElement?.hide();
       filterEl.value = "";

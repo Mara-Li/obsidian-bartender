@@ -152,3 +152,7 @@ div.nav-action-button[data-sort-method="custom"]
 .nav-files-container .sortable-fallback {
   display: none;
 }
+
+div.nav-buttons-container > div.nav-action-button.hide {
+  display: none;
+}
