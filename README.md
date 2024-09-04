@@ -2,10 +2,10 @@
 
 > [!WARNING]
 > The plugin is heavely experimental and use some internal function of Obsidian to make it works. It can break at any update of Obsidian.  
-> As I'm not the original maintener some part of the code are obscure to me. I will try to fix any bug you can [make](https://github.com/Mara-Li/obsidian-bartender/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml&title=%5BBug%5D%3A+), but new feature can be difficult to support.  
+> As I'm not the original maintainer some part of the code are obscure to me. I will try to fix any bug you can [make](https://github.com/Mara-Li/obsidian-bartender/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml&title=%5BBug%5D%3A+), but new feature can be difficult to support.  
 > More over, the loading of the plugin and the unloading doesn't work pretty well, and you **always** should to reload Obsidian to make it works.
 
-Take control of your Obsidian workspace by organizing, rearranging, and filtering the file explorer. It also add collapse (optionally) in the status bar and ribbon.
+Take control of your Obsidian workspace by organizing, rearranging, and filtering the file explorer. It also adds collapse (optionally) in the status bar and ribbon.
 
 ## File Explorer
 
