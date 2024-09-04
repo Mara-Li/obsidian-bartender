@@ -1,3 +1,8 @@
+## [0.5.15](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.14...0.5.15) (2024-09-04)
+### Bug Fixes
+
+* bartender doesn't appear with new Obsidian version (up to 1.7.1) ([ef06301](https://github.com/Mara-Li/obsidian-bartender/commit/ef063015a27b0fbfcb62291203918fb7b7713ab2))
+
 ## [0.5.14](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.13...0.5.14) (2024-06-11)
 
 ## [0.5.13](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.12...0.5.13) (2024-06-10)
