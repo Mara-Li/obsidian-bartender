@@ -16,7 +16,7 @@ import {
 	WorkspaceLeaf,
 	type WorkspaceSplit,
 	WorkspaceTabs,
-	requireApiVersion,
+	requireApiVersion, type App,
 } from "obsidian";
 
 import Sortable, { MultiDrag } from "sortablejs";
@@ -193,13 +193,12 @@ export default class BartenderPlugin extends Plugin {
 		fileExplorer.tree.infinityScroll.compute();
 	}
 
-	fileExplorerFilter = function (fileExplorer: FileExplorerView) {
+	fileExplorerFilter = function (fileExplorer: FileExplorerView, app: App) {
 		const supportsVirtualChildren = requireApiVersion?.("0.15.0");
 		/*    let leaf = this?.rootEl?.view?.app.workspace.getLeaf(true);
 	let fileExplorer = this?.rootEl?.view?.app.viewRegistry.viewByType["file-explorer"](leaf) as FileExplorerView;*/
 
 		//let fileExplorer = this?.rootEl?.fileExplorer;
-
 		if (!fileExplorer) return;
 		const _children = supportsVirtualChildren
 			? this.rootEl?.vChildren._children
@@ -219,7 +218,7 @@ export default class BartenderPlugin extends Plugin {
 				ignoreLocation: true,
 				keys: ["file.path"],
 			};
-			const flattenedItems = getItems(this.rootEl._children);
+			const flattenedItems = getItems(this.rootEl._children, app);
 			const fuse = new Fuse(flattenedItems, options);
 			const maxResults = 200;
 			const results = fuse.search(this.filter).slice(0, maxResults);
@@ -241,7 +240,7 @@ export default class BartenderPlugin extends Plugin {
 			}
 		}
 
-		const flattenedItems = getItems(this.rootEl._children);
+		const flattenedItems = getItems(this.rootEl._children, app);
 		flattenedItems.map((match: ChildElement) => {
 			if (!(<any>match).innerEl.origContent) {
 				return;
@@ -479,7 +478,7 @@ export default class BartenderPlugin extends Plugin {
 					return function (...args: any[]) {
 						try {
 							if (this.scrollEl.hasClass("nav-files-container")) {
-								plugin.fileExplorerFilter.call(this, fileExplorer);
+								plugin.fileExplorerFilter.call(this, fileExplorer, plugin.app);
 							}
 						} catch (err) {
 							console.log(err);
@@ -907,7 +906,6 @@ export default class BartenderPlugin extends Plugin {
 				 else el.remove();
 			}
 			const filterEl = leaf.containerEl.querySelectorAll('.search-input-container.filter');
-			console.log(filterEl);
 			for (const el of filterEl) {
 				el.remove();
 			}

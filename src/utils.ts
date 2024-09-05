@@ -1,5 +1,5 @@
 import Fuse from "fuse.js";
-import { type ChildElement, requireApiVersion } from "obsidian";
+import {type App, type ChildElement, requireApiVersion} from "obsidian";
 
 export function getPreviousSiblings(el: HTMLElement, filter?: (el: HTMLElement) => boolean): HTMLElement[] {
   const sibs = [];
@@ -71,9 +71,16 @@ export function reorderArray(array: any[], from: number, to: number, on = 1) {
 
 // flatten infinity scroll root elements
 
-export const getItems = (items: ChildElement[]): ChildElement[] => {
+export const getItems = (items: ChildElement[], app: App): ChildElement[] => {
   let children: any[] = [];
   const supportsVirtualChildren = requireApiVersion && requireApiVersion("0.15.0");
+  const excluded = app.vault.config.userIgnoreFilters;
+  if (excluded) {
+    items = items.filter(item => {
+      //if the item.file.path startswith any of the excluded paths, return false
+      return !excluded.some(exclude => item.file.path.startsWith(exclude));
+    });
+  }
   return supportsVirtualChildren ? items
   .reduce((res, item) => {
     if (item.vChildren?._children) {
@@ -83,7 +90,7 @@ export const getItems = (items: ChildElement[]): ChildElement[] => {
     }
     return res;
   }, [] as ChildElement[])
-  .concat(children.length ? getItems(children) : children) : items
+  .concat(children.length ? getItems(children, app) : children) : items
   .reduce((res, item) => {
     if (item.children) {
       children = [...children, ...item.children];
@@ -92,7 +99,7 @@ export const getItems = (items: ChildElement[]): ChildElement[] => {
     }
     return res;
   }, [] as ChildElement[])
-  .concat(children.length ? getItems(children) : children);
+  .concat(children.length ? getItems(children, app) : children);
 };
 
 // highlight fuzzy filter matches
