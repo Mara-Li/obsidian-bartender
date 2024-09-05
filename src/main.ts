@@ -16,7 +16,8 @@ import {
 	WorkspaceLeaf,
 	type WorkspaceSplit,
 	WorkspaceTabs,
-	requireApiVersion, type App,
+	requireApiVersion,
+	type App,
 } from "obsidian";
 
 import Sortable, { MultiDrag } from "sortablejs";
@@ -118,7 +119,6 @@ export default class BartenderPlugin extends Plugin {
 			})
 		);
 		leaf.detach();
-		
 	}
 
 	initialize() {
@@ -170,11 +170,9 @@ export default class BartenderPlugin extends Plugin {
 			const fileExplorer = this.getFileExplorer();
 			this.setFileExplorerFilter(fileExplorer);
 			addSortButton(this, null, null, null, null);
-			
-		// give time for plugins like Customizable Page Header to add their icons
+
+			// give time for plugins like Customizable Page Header to add their icons
 		});
-		
-		
 	}
 
 	registerSettingsTab() {
@@ -184,9 +182,10 @@ export default class BartenderPlugin extends Plugin {
 
 	clearFileExplorerFilter() {
 		const fileExplorer = this.getFileExplorer();
-		const fileExplorerFilterEl: HTMLInputElement | null = fileExplorer.containerEl.querySelector(
-			'.workspace-leaf-content[data-type="file-explorer"] .search-input-container > input'
-		);
+		const fileExplorerFilterEl: HTMLInputElement | null =
+			fileExplorer.containerEl.querySelector(
+				'.workspace-leaf-content[data-type="file-explorer"] .search-input-container > input'
+			);
 		fileExplorerFilterEl?.remove();
 		if (fileExplorerFilterEl) fileExplorerFilterEl.value = "";
 		fileExplorer.tree.infinityScroll.filter = "";
@@ -227,6 +226,7 @@ export default class BartenderPlugin extends Plugin {
 			} else {
 				this.rootEl.children = highlight(results);
 			}
+
 			return;
 		}
 		if (!(this.filter?.length < 1 && this.filtered)) {
@@ -245,6 +245,7 @@ export default class BartenderPlugin extends Plugin {
 			if (!(<any>match).innerEl.origContent) {
 				return;
 			}
+
 			// @ts-ignore
 			match.innerEl.setText((<any>match).innerEl.origContent);
 			delete (<any>match).innerEl.origContent;
@@ -497,7 +498,6 @@ export default class BartenderPlugin extends Plugin {
 							return addSortButton.call(this, plugin, ...args);
 						}
 						return old.call(this, ...args);
-
 					};
 				},
 			})
@@ -678,7 +678,9 @@ export default class BartenderPlugin extends Plugin {
 	}
 
 	setFileExplorerFilter(fileExplorer?: FileExplorerView) {
-		const fileExplorerNav = fileExplorer?.headerDom?.navHeaderEl ?? this.getFileExplorer().headerDom.navHeaderEl;
+		const fileExplorerNav =
+			fileExplorer?.headerDom?.navHeaderEl ??
+			this.getFileExplorer().headerDom.navHeaderEl;
 		if (!fileExplorerNav) {
 			return;
 		}
@@ -711,7 +713,7 @@ export default class BartenderPlugin extends Plugin {
 			"search-input-clear-button",
 			(el) => {
 				el.addEventListener("click", () => {
-					(fileExplorerFilterInput.value = "");
+					fileExplorerFilterInput.value = "";
 					clearButtonEl.hide();
 					fileExplorerFilterInput.focus();
 					fileExplorerFilterInput.dispatchEvent(new Event("input"));
@@ -729,8 +731,9 @@ export default class BartenderPlugin extends Plugin {
 			!fileExplorer ||
 			this.settings.sortOrder !== "custom" ||
 			fileExplorer.hasCustomSorter
-		) return;
-		
+		)
+			return;
+
 		const roots = this.getRootFolders(fileExplorer);
 		if (!roots || !roots.length) return;
 		for (const root of roots) {
@@ -797,7 +800,7 @@ export default class BartenderPlugin extends Plugin {
 		const fileExplorer: FileExplorerView | undefined = this.app.workspace
 			.getLeavesOfType("file-explorer")
 			?.first()?.view as unknown as FileExplorerView;
-		
+
 		return fileExplorer;
 	}
 
@@ -862,7 +865,10 @@ export default class BartenderPlugin extends Plugin {
 		}
 		delete fileExplorer.hasCustomSorter;
 		// unset "custom" file explorer sort
-		if (this.app.vault.getConfig("fileSortOrder") === "custom" || this.settings.sortOrder === "custom") {
+		if (
+			this.app.vault.getConfig("fileSortOrder") === "custom" ||
+			this.settings.sortOrder === "custom"
+		) {
 			fileExplorer.setSortOrder("alphabetical");
 			this.settings.sortOrder = "alphabetical";
 		} else {
@@ -895,17 +901,23 @@ export default class BartenderPlugin extends Plugin {
 		this.cleanupFileExplorerSorters();
 		const leaf = this.app.workspace.getLeavesOfType("file-explorer")?.first()?.view;
 		if (leaf) {
-			const oldChild = leaf.containerEl.querySelector("div.nav-buttons-container")?.querySelectorAll("div.nav-action-button.custom-sort") || [];
+			const oldChild =
+				leaf.containerEl
+					.querySelector("div.nav-buttons-container")
+					?.querySelectorAll("div.nav-action-button.custom-sort") || [];
 			for (const el of oldChild) {
 				if (el.ariaLabel === "move" || el.ariaLabel === "arrow-up-narrow-wide") {
 					//only remove the custom sort option
-					const hiddenButton = leaf.containerEl.querySelector(`div.nav-buttons-container > div.nav-action-button.hide[aria-label="${el.ariaLabel}"]`);
+					const hiddenButton = leaf.containerEl.querySelector(
+						`div.nav-buttons-container > div.nav-action-button.hide[aria-label="${el.ariaLabel}"]`
+					);
 					if (hiddenButton) hiddenButton.removeClass("hide");
 					el.remove();
-				}
-				 else el.remove();
+				} else el.remove();
 			}
-			const filterEl = leaf.containerEl.querySelectorAll('.search-input-container.filter');
+			const filterEl = leaf.containerEl.querySelectorAll(
+				".search-input-container.filter"
+			);
 			for (const el of filterEl) {
 				el.remove();
 			}
