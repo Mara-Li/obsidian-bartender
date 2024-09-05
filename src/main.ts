@@ -168,6 +168,7 @@ export default class BartenderPlugin extends Plugin {
 				Platform.isMobile ? 3000 : 400
 			);
 			const fileExplorer = this.getFileExplorer();
+			this.setFileExplorerFilter(fileExplorer);
 			addSortButton(this, null, null, null, null);
 			
 		// give time for plugins like Customizable Page Header to add their icons
@@ -183,9 +184,10 @@ export default class BartenderPlugin extends Plugin {
 
 	clearFileExplorerFilter() {
 		const fileExplorer = this.getFileExplorer();
-		const fileExplorerFilterEl: HTMLInputElement | null = document.body.querySelector(
+		const fileExplorerFilterEl: HTMLInputElement | null = fileExplorer.containerEl.querySelector(
 			'.workspace-leaf-content[data-type="file-explorer"] .search-input-container > input'
 		);
+		fileExplorerFilterEl?.remove();
 		if (fileExplorerFilterEl) fileExplorerFilterEl.value = "";
 		fileExplorer.tree.infinityScroll.filter = "";
 		fileExplorer.tree.infinityScroll.compute();
@@ -681,7 +683,7 @@ export default class BartenderPlugin extends Plugin {
 		if (!fileExplorerNav) {
 			return;
 		}
-		const fileExplorerFilter = fileExplorerNav.createDiv("search-input-container");
+		const fileExplorerFilter = fileExplorerNav.createDiv("search-input-container filter");
 		fileExplorerNav.insertAdjacentElement("afterend", fileExplorerFilter);
 		const fileExplorerFilterInput = fileExplorerFilter.createEl("input");
 		fileExplorerFilterInput.placeholder = "Type to filter...";
@@ -904,9 +906,10 @@ export default class BartenderPlugin extends Plugin {
 				}
 				 else el.remove();
 			}
-			const filterEl = document.body.querySelectorAll('.workspace-leaf-content[data-type="file-explorer"] .search-input-container > input');
+			const filterEl = leaf.containerEl.querySelectorAll('.search-input-container.filter');
+			console.log(filterEl);
 			for (const el of filterEl) {
-				el.detach();
+				el.remove();
 			}
 		}
 	}

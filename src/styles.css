@@ -156,3 +156,7 @@ div.nav-action-button[data-sort-method="custom"]
 div.nav-buttons-container > div.nav-action-button.hide {
   display: none;
 }
+
+.search-input-container.filter {
+  margin: 5px;
+}

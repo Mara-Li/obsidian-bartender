@@ -123,16 +123,31 @@ function addButton(icon: "move" | "arrow-up-narrow-wide" | "three-horizontal-bar
       if (oldChild[i].hasClass("custom-sort")) oldChild[i].remove();
       else oldChild[i].addClass("hide");
     }
-    leaf.containerEl.querySelector("div.nav-buttons-container")?.appendChild(button);
+    const shouldBeBefore = (icon === "move" || icon === "arrow-up-narrow-wide" || icon === "three-horizontal-bars");
+    if (shouldBeBefore) {
+      const devAll = leaf.containerEl.querySelector(`div.nav-buttons-container > .nav-action-button[aria-label='${Translate("plugins.file-explorer.action-collapse-all")}']`);
+      const expandAll = leaf.containerEl.querySelector(`div.nav-buttons-container > .nav-action-button[aria-label='${Translate("plugins.file-explorer.action-expand-all")}']`);
+      if (devAll) {
+        leaf.containerEl.querySelector("div.nav-buttons-container").insertBefore(button, devAll);
+      } else if (expandAll) {
+        leaf.containerEl.querySelector("div.nav-buttons-container").insertBefore(button, expandAll);
+      }
+      else {
+        leaf.containerEl.querySelector("div.nav-buttons-container").appendChild(button);
+      }
+    } else leaf.containerEl.querySelector("div.nav-buttons-container").appendChild(button);
   }
   return button;
 }
+
+
+
 
 export const addSortButton = function (
   bartender: BartenderPlugin,
   _sorter: any,
   sortOption: any,
-  setSortOrder: any,
+  _setSortOrder: any,
   _currentSort: any
 ) {
   const plugin = this;
