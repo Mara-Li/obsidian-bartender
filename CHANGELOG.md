@@ -1,3 +1,13 @@
+## [0.5.16](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.15...0.5.16) (2024-09-05)
+### Features
+
+* **filter:** exclude user defined excluded files/folder ([9554b9e](https://github.com/Mara-Li/obsidian-bartender/commit/9554b9efb6edaa31686551d80c8f7bab5af7a2b6)), closes [#4](https://github.com/Mara-Li/obsidian-bartender/issues/4)
+* **filter:** path shortener ([c3607d3](https://github.com/Mara-Li/obsidian-bartender/commit/c3607d3911c7828a237848b6b460bb3294331296)), closes [#5](https://github.com/Mara-Li/obsidian-bartender/issues/5)
+
+### Bug Fixes
+
+* adjust position of custom sort ([9d1a8dc](https://github.com/Mara-Li/obsidian-bartender/commit/9d1a8dcbdd4e18dc1e7f702c7f06c875801e8f49))
+
 ## [0.5.15](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.14...0.5.15) (2024-09-04)
 ### Bug Fixes
 
