@@ -163,7 +163,7 @@ export function removeExt(obj: any) {
 		const parts = obj.split("/");
 		let newObj = obj;
 		if (parts.length >= 3) {
-			for (let i = 1; i < parts.length-1; i += 2) {
+			for (let i = 1; i < parts.length - 1; i += 2) {
 				parts[i] = "…";
 			}
 			newObj = parts.join("/");
