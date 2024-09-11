@@ -1,31 +1,31 @@
 import Fuse from "fuse.js";
 import { around } from "monkey-around";
 import {
+	type App,
 	type ChildElement,
 	type FileExplorerView,
 	Platform,
 	Plugin,
 	type RootElements,
 	Scope,
-	setIcon,
 	type SplitDirection,
 	View,
 	type ViewCreator,
 	Workspace,
 	type WorkspaceItem,
-	WorkspaceLeaf,
+	type WorkspaceLeaf,
 	type WorkspaceSplit,
 	WorkspaceTabs,
 	requireApiVersion,
-	type App,
+	setIcon,
 } from "obsidian";
 
 import Sortable, { MultiDrag } from "sortablejs";
 import { addSortButton, folderSortV2 } from "./custom-sort";
 import { type BartenderSettings, DEFAULT_SETTINGS, SettingTab } from "./settings";
 import {
-	generateId,
 	type GenerateIdOptions,
+	generateId,
 	getFn,
 	getItems,
 	getNextSiblings,
@@ -124,6 +124,8 @@ export default class BartenderPlugin extends Plugin {
 	initialize() {
 		this.app.workspace.onLayoutReady(() => {
 			this.patchFileExplorerFolder();
+			const fileExplorer = this.getFileExplorer();
+			this.setFileExplorerFilter(fileExplorer);
 			setTimeout(
 				() => {
 					if (Platform.isDesktop && this.settings.useCollapse) {
@@ -152,6 +154,7 @@ export default class BartenderPlugin extends Plugin {
 						this.setRibbonBarSorter();
 					}
 
+					addSortButton(this, null, null, null, null);
 					// add sorter to all view actions icon groups
 					this.app.workspace.iterateRootLeaves((leaf) => {
 						if (
@@ -167,9 +170,6 @@ export default class BartenderPlugin extends Plugin {
 				},
 				Platform.isMobile ? 3000 : 400
 			);
-			const fileExplorer = this.getFileExplorer();
-			this.setFileExplorerFilter(fileExplorer);
-			addSortButton(this, null, null, null, null);
 
 			// give time for plugins like Customizable Page Header to add their icons
 		});
@@ -194,10 +194,6 @@ export default class BartenderPlugin extends Plugin {
 
 	fileExplorerFilter = function (fileExplorer: FileExplorerView, app: App) {
 		const supportsVirtualChildren = requireApiVersion?.("0.15.0");
-		/*    let leaf = this?.rootEl?.view?.app.workspace.getLeaf(true);
-	let fileExplorer = this?.rootEl?.view?.app.viewRegistry.viewByType["file-explorer"](leaf) as FileExplorerView;*/
-
-		//let fileExplorer = this?.rootEl?.fileExplorer;
 		if (!fileExplorer) return;
 		const _children = supportsVirtualChildren
 			? this.rootEl?.vChildren._children
@@ -218,6 +214,7 @@ export default class BartenderPlugin extends Plugin {
 				keys: ["file.path"],
 			};
 			const flattenedItems = getItems(this.rootEl._children, app);
+			console.log("getItems");
 			const fuse = new Fuse(flattenedItems, options);
 			const maxResults = 200;
 			const results = fuse.search(this.filter).slice(0, maxResults);
@@ -337,27 +334,10 @@ export default class BartenderPlugin extends Plugin {
 				},
 			})
 		);
-		// This catches the initial FE view registration so that we can patch the sort button creation logic before
-		// the button is created
-		// TODO: Add conditional logic to patch the sort button even if we don't catch the initial startup
-		// 1) If layout ready, get the existing FE instance, create a patched button, and hide the existing button
-		// 2) Patch `addSortButton` to emit an event
-		// 3) On event,
-		if (this.app.workspace.layoutReady) {
+		this.app.workspace.onLayoutReady(() => {
 			this.patchFileExplorer();
-		} else {
-			const eventRef = this.app.workspace.on(
-				"view-registered",
-				(type: string, viewCreator: ViewCreator) => {
-					if (type !== "file-explorer") return;
-					this.app.workspace.offref(eventRef);
-					// @ts-ignore we need a leaf before any leafs exists in the workspace, so we create one from scratch
-					const leaf = new WorkspaceLeaf(plugin.app);
-					const fileExplorer = viewCreator(leaf) as FileExplorerView;
-					this.patchFileExplorer(fileExplorer);
-				}
-			);
-		}
+		});
+
 		this.register(
 			around(View.prototype, {
 				onunload(old: any) {
@@ -678,9 +658,8 @@ export default class BartenderPlugin extends Plugin {
 	}
 
 	setFileExplorerFilter(fileExplorer?: FileExplorerView) {
-		const fileExplorerNav =
-			fileExplorer?.headerDom?.navHeaderEl ??
-			this.getFileExplorer().headerDom.navHeaderEl;
+		fileExplorer = fileExplorer ?? this.getFileExplorer();
+		const fileExplorerNav = fileExplorer?.headerDom?.navHeaderEl;
 		if (!fileExplorerNav) {
 			return;
 		}
@@ -698,7 +677,6 @@ export default class BartenderPlugin extends Plugin {
 			this.app.keymap.popScope(filterScope);
 		};
 		fileExplorerFilterInput.oninput = (ev: InputEvent) => {
-			const fileExplorer = this.getFileExplorer();
 			if (ev.target instanceof HTMLInputElement) {
 				if (ev.target.value.length) {
 					clearButtonEl.show();
