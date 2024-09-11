@@ -232,9 +232,16 @@ export default class BartenderPlugin extends Plugin {
 				},
 			})
 		);
-		this.app.workspace.onLayoutReady(() => {
+		if (this.app.workspace.layoutReady) {
 			this.patchFileExplorer();
-		});
+		} else {
+			// wait for layout to be ready
+			this.registerEvent(
+				this.app.workspace.on("layout-ready", () => {
+					this.patchFileExplorer();
+				})
+			);
+		}
 
 		this.register(
 			around(View.prototype, {
