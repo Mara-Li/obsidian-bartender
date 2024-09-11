@@ -123,7 +123,6 @@ export class Collapse {
 	}
 
 	setViewActionSorter(el: HTMLElement, view: View): Sortable | undefined {
-		this.settings = this.plugin.settings;
 		this.setElementIDs(el, { useClass: true, useIcon: true });
 		const hasSorter = Object.values(el).find((value) =>
 			value?.hasOwnProperty("nativeDraggable")

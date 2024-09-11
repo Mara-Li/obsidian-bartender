@@ -31,10 +31,10 @@ export default class BartenderPlugin extends Plugin {
 	customSorter: CustomSorter;
 
 	async onload() {
+		await this.loadSettings();
 		this.collapse = new Collapse(this);
 		this.customFilter = new CustomFilter(this);
 		this.customSorter = new CustomSorter(this);
-		await this.loadSettings();
 		this.registerMonkeyPatches();
 		this.registerEventHandlers();
 		this.registerSettingsTab();

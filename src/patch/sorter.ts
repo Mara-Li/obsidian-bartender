@@ -95,7 +95,6 @@ export class CustomSorter {
 	}
 
 	setFileExplorerSorter(fileExplorer?: FileExplorerView) {
-		this.settings = this.plugin.settings;
 		if (!fileExplorer) fileExplorer = this.plugin.getFileExplorer();
 		if (
 			!fileExplorer ||
