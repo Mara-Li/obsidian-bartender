@@ -1,3 +1,5 @@
+## 0.5.17-1 (2024-09-14)
+
 ## [0.5.17-0](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.16...0.5.17-0) (2024-09-11)
 ### Bug Fixes
 
