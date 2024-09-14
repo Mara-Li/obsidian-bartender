@@ -1,10 +1,10 @@
 {
-  "id": "obsidian-bartender",
-  "name": "Bartender",
-  "version": "0.5.17-1",
-  "minAppVersion": "1.7.1",
-  "description": "Allows for rearranging the elements in the status bar and sidebar ribbon",
-  "author": "NothingIsLost, zansbang, Mara-Li",
-  "authorUrl": "https://github.com/Mara-Li",
-  "isDesktopOnly": false
+	"id": "obsidian-bartender",
+	"name": "Bartender",
+	"version": "0.5.17-1",
+	"minAppVersion": "1.7.1",
+	"description": "Allows for rearranging the elements in the status bar and sidebar ribbon",
+	"author": "NothingIsLost, zansbang, Mara-Li",
+	"authorUrl": "https://github.com/Mara-Li",
+	"isDesktopOnly": false
 }
