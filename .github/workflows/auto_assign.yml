@@ -1,18 +1,16 @@
 name: Auto Assign
 on:
-  issues:
-    types: [opened, edited, labeled, unlabeled]
-  pull_request:
-    types: [opened, edited, labeled, unlabeled]
-
+    issues:
+        types: [opened, edited, labeled, unlabeled]
+    pull_request:
+        types: [opened, edited, labeled, unlabeled]
 jobs:
-  auto-assign:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: wow-actions/auto-assign@v3
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          reviewers: |
-              ${{ github.repository_owner}}
-          assignees: ${{ github.repository_owner}}
-          skipKeywords: wip, draft
+    auto-assign:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: wow-actions/auto-assign@v3
+              with:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  reviewers: ${{github.repository_owner}}
+                  assignees: ${{github.repository_owner}}
+                  skipKeywords: wip, draft
