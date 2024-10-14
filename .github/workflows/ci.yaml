@@ -37,5 +37,6 @@ jobs:
       PLUGIN_NAME: ${{ github.event.repository.name}}
       BETA: ${{ inputs.beta }}
       CACHE: "pnpm"
+      BRANCH: "main"
     secrets:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
