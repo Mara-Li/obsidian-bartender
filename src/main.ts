@@ -86,7 +86,7 @@ export default class BartenderPlugin extends Plugin {
 
 	patchFileExplorerFolder() {
 		const plugin = this;
-		const leaf = plugin.app.workspace.getLeaf();
+		const leaf = plugin.app.workspace.getLeaf(true);
 		const fileExplorer = plugin.app.viewRegistry.viewByType["file-explorer"](
 			leaf
 		) as FileExplorerView;
