@@ -35,6 +35,7 @@ export default class BartenderPlugin extends Plugin {
 		this.collapse = new Collapse(this);
 		this.customFilter = new CustomFilter(this);
 		this.customSorter = new CustomSorter(this);
+		console.log("Bartender loaded");
 		this.registerMonkeyPatches();
 		this.registerEventHandlers();
 		this.registerSettingsTab();
@@ -233,9 +234,11 @@ export default class BartenderPlugin extends Plugin {
 			})
 		);
 		if (this.app.workspace.layoutReady) {
+			console.log("the layout is ready");
 			this.patchFileExplorer();
 		} else {
 			// wait for layout to be ready
+			console.log("waiting for layout to be ready");
 			this.registerEvent(
 				this.app.workspace.on("layout-ready", () => {
 					this.patchFileExplorer();

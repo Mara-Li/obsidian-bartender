@@ -1,6 +1,6 @@
 import { Menu, type TAbstractFile, type TFile, TFolder, setIcon } from "obsidian";
-import type { BartenderSettings } from "./settings";
 import type BartenderPlugin from "./main";
+import type { BartenderSettings } from "./settings";
 
 const Collator = new Intl.Collator(undefined, {
 	usage: "sort",

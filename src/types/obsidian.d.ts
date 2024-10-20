@@ -1,6 +1,6 @@
 import "obsidian";
 import type Sortable from "sortablejs";
-import {AppVaultConfig} from "obsidian-typings";
+import { AppVaultConfig } from "obsidian-typings";
 
 declare module "obsidian" {
 	export interface Workspace extends Events {
