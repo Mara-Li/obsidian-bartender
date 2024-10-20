@@ -1,3 +1,9 @@
+## [0.5.18](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.17-1...0.5.18) (2024-10-20)
+### Bug Fixes
+
+* **filter:** Prevent dragging when filtering without clicking rearrange ([e0dbb42](https://github.com/Mara-Li/obsidian-bartender/commit/e0dbb42e79ddb866c00e4ccfb6288074b3d6882e))
+* **leaf:** file closed at plugin load ([bcae354](https://github.com/Mara-Li/obsidian-bartender/commit/bcae354f3e8d41397a2cf3c4932a7b27b3fc2d40)), closes [#13](https://github.com/Mara-Li/obsidian-bartender/issues/13)
+
 ## 0.5.17 (2024-10-14)
 
 ## [0.5.16](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.15...0.5.16) (2024-09-05)
