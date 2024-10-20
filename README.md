@@ -46,6 +46,20 @@ White space acts as an **AND** operator, while a single pipe (`|`) character act
     - In Obsidian settings, at "Community Plugin", reload the plugin list
     - Enable the plugin (or reload it if already installed)
 
+
+## Compatibility
+
+Some plugins will cause bug to this plugin. You can try to force the loading of Bartender after them to prevents issues.
+
+The best way is to use [Lazy plugin loader](https://github.com/alangrainger/obsidian-lazy-plugins) and set bartender to load at short (other must be instant).
+
+If anyone know what are the plugins that cause issues, please let me know and I will add a list here.
+
+For the moment, plugin that **can maybe** (not sure) cause issues, are:
+- [Explorer Hider](https://github.com/Mara-Li/obsidian-explorer-hider)
+- [Iconic](https://github.com/gfxholo/iconic)
+- [Iconize](https://github.com/FlorianWoelki/obsidian-iconize)
+
 ## Credit
 
 - <ins>Original work</ins>: [NothingIsLost](https://github.com/nothingislost/obsidian-bartender/)
