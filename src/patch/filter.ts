@@ -139,7 +139,7 @@ export class CustomFilter {
 				ignoreLocation: true,
 				keys: ["file.path"],
 			};
-			const flattenedItems = filter.getItems(this.rootEl._children, app);
+			const flattenedItems = filter.getItems(this.rootEl._children, fileExplorer.app);
 			const fuse = new Fuse(flattenedItems, options);
 			const maxResults = 200;
 			const results = fuse.search(this.filter).slice(0, maxResults);
@@ -162,7 +162,7 @@ export class CustomFilter {
 			}
 		}
 
-		const flattenedItems = filter.getItems(this.rootEl._children, app);
+		const flattenedItems = filter.getItems(this.rootEl._children, fileExplorer.app);
 		flattenedItems.map((match: ChildElement) => {
 			if (!(<any>match).innerEl.origContent) {
 				return;
