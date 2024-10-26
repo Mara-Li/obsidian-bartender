@@ -129,11 +129,17 @@ export class CustomSorter {
 				animation: ANIMATION_DURATION,
 				onStart: (evt) => {
 					draggedItems = evt.items.length ? evt.items : [evt.item];
+					//disable the draggable
+					for (const elem of draggedItems) {
+						const it = elem.querySelector(".tree-item-self") as HTMLElement | undefined;
+						if (it) {
+							it.draggable = false;
+							it.classList.remove("is-being-dragged");
+							it.classList.add("is-moved");
+						}
+					}
 				},
 				onMove: (evt) => {
-					// TODO: Refactor this
-					// Responsible for updating the internal Obsidian array that contains the file item order
-					// Without this logic, reordering is ephemeral and will be undone by Obisidian's native processes
 					const supportsVirtualChildren = requireApiVersion?.("0.15.0");
 					let _children = supportsVirtualChildren
 						? root.vChildren?._children
@@ -158,6 +164,14 @@ export class CustomSorter {
 					// return !adjacentEl.hasClass("nav-folder");
 				},
 				onEnd: (_evt) => {
+					for (const elem of draggedItems) {
+						const it = elem.querySelector(".tree-item-self") as HTMLElement | undefined;
+						if (it) {
+							it.draggable = true;
+							it.classList.add("is-being-dragged");
+							it.classList.remove("is-moved");
+						}
+					}
 					draggedItems = [];
 					document.querySelector("body>div.drag-ghost")?.detach();
 				},

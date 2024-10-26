@@ -153,3 +153,9 @@ div.nav-buttons-container > div.nav-action-button.hide {
 .search-input-container.filter {
 	margin: 5px;
 }
+
+.tree-item-self.is-moved {
+	background-color: var(--background-secondary-alt) !important;
+}
+
+
