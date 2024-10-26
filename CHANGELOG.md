@@ -1,3 +1,8 @@
+## [0.5.19](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.18...0.5.19) (2024-10-26)
+### Bug Fixes
+
+* **sorter:** collision between draggable into folder & drag to rearrange (Obsidian v.1.7.4) ([7e21e19](https://github.com/Mara-Li/obsidian-bartender/commit/7e21e190c1c6f8b85f2f361a8a6c4776b74d4aa0))
+
 ## [0.5.18](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.17-1...0.5.18) (2024-10-20)
 ### Bug Fixes
 
