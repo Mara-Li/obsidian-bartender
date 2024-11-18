@@ -1,3 +1,9 @@
+## [0.5.20](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.18...0.5.20) (2024-11-18)
+### Bug Fixes
+
+* remove deprecated "is-being-dragged" usage ([bd91295](https://github.com/Mara-Li/obsidian-bartender/commit/bd9129597b6159f03b026c38caefa510ce2af4a1)), closes [#17](https://github.com/Mara-Li/obsidian-bartender/issues/17)
+* **sorter:** collision between draggable into folder & drag to rearrange (Obsidian v.1.7.4) ([2781f27](https://github.com/Mara-Li/obsidian-bartender/commit/2781f27a0da285bde4e20d45db195d3fd5e5fc2f)), closes [#15](https://github.com/Mara-Li/obsidian-bartender/issues/15)
+
 ## [0.5.19](https://github.com/Mara-Li/obsidian-bartender/compare/0.5.18...0.5.19) (2024-10-26)
 ### Bug Fixes
 
