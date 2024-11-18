@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-bartender",
-	"version": "0.5.20",
+	"version": "1.0.0",
 	"description": "Allows for rearranging the elements in the status bar and sidebar ribbon",
 	"main": "main.js",
 	"private": true,
@@ -20,10 +20,7 @@
 		"url": "https://github.com/Mara-Li/obsidian-bartender/"
 	},
 	"author": "nothingislost",
-	"contributors": [
-		"Mara-Li",
-		"zansbang"
-	],
+	"contributors": ["Mara-Li", "zansbang"],
 	"license": "MIT",
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
