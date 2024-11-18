@@ -154,8 +154,9 @@ div.nav-buttons-container > div.nav-action-button.hide {
 	margin: 5px;
 }
 
-.tree-item-self.is-moved {
+.is-moved {
 	background-color: var(--background-secondary-alt) !important;
+	border-color: var(--background-secondary-alt) !important;
 }
 
 

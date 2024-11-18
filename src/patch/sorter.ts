@@ -134,7 +134,6 @@ export class CustomSorter {
 						const it = elem.querySelector(".tree-item-self") as HTMLElement | undefined;
 						if (it) {
 							it.draggable = false;
-							it.classList.remove("is-being-dragged");
 							it.classList.add("is-moved");
 						}
 					}
@@ -168,7 +167,6 @@ export class CustomSorter {
 						const it = elem.querySelector(".tree-item-self") as HTMLElement | undefined;
 						if (it) {
 							it.draggable = true;
-							it.classList.add("is-being-dragged");
 							it.classList.remove("is-moved");
 						}
 					}
