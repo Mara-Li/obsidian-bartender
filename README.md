@@ -59,6 +59,7 @@ For the moment, plugin that **can maybe** (not sure) cause issues, are:
 - [Explorer Hider](https://github.com/Mara-Li/obsidian-explorer-hider)
 - [Iconic](https://github.com/gfxholo/iconic)
 - [Iconize](https://github.com/FlorianWoelki/obsidian-iconize)
+- Workspace (official): Bartender prevent the explorer to load (as in Obsidian v1.8.7).
 
 ## Credit
 
