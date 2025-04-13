@@ -1,3 +1,10 @@
+> [!IMPORTANT]
+> This plugin is now archived in favor of [Manual Sorting](https://github.com/Kh4f/obsidian-manual-sorting).  
+> Manual Sorting provides similar features with a smoother user experience. It offers an intuitive UI, reliable file and folder reordering, and is actively maintained to stay compatible with Obsidian's updates.
+
+Thanks to everyone who used and supported Obsidian Bartender!
+
+---
 # Obsidian Bartender
 
 > [!WARNING]
